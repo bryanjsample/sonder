@@ -46,7 +46,6 @@ private struct RootView: View {
                             if let err = error {
                                 print(err)
                             }
-                           
                         }
                     }
                     .onOpenURL { url in

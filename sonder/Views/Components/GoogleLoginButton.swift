@@ -40,8 +40,6 @@ extension GoogleLoginButton {
             
             _ = user.toDTO()
             
-            /*Look at GoogleLoginButton.swift at the handlePress() function. I have written in pseudocode what I would like the function to do. What is the best way to do this considering it is located within the closure for GIDSignIn?*/
-            
             // SEND HTTP REQUEST TO /auth/google/success TO OBTAIN ACCESS AND REFRESH KEYS
             
             // DETERMINE IF USER ALREADY EXISTS SEND BACK BOOL FROM SERVER

@@ -39,7 +39,7 @@
 		C61DEDDA2EE3957C006F5651 /* Exceptions for "sonder" folder in "sonder" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plst,
+				Info.plist,
 			);
 			target = C64514762ED36BD10066510E /* sonder */;
 		};
@@ -50,7 +50,7 @@
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = C64514732ED36BD10066510E /* Sources */;
 			membershipExceptions = (
-				Info.plst,
+				Info.plist,
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */

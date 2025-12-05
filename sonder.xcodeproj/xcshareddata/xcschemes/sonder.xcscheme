@@ -82,7 +82,7 @@
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "GID_CLIENT_ID"
-            value = "41328959206-je81fakbmpe9aodqrram2q8t9sffshot.apps.googleusercontent.com "
+            value = "41328959206-je81fakbmpe9aodqrram2q8t9sffshot.apps.googleusercontent.com"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
