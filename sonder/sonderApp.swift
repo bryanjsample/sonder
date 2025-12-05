@@ -6,12 +6,22 @@
 //
 
 import SwiftUI
+import GoogleSignIn
 
 @main
 struct sonderApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
+                .onAppear {
+                    GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+                        print(user!)
+                        print(error!)
+                    }
+                }
+                .onOpenURL { url in
+                GIDSignIn.sharedInstance.handle(url)
+            }
         }
     }
 }

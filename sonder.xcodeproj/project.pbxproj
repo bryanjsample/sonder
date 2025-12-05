@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C61DEDA12EDF8270006F5651 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C61DEDA02EDF8270006F5651 /* GoogleSignIn */; };
+		C61DEDA32EDF8270006F5651 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C61DEDA22EDF8270006F5651 /* GoogleSignInSwift */; };
+		C61DEDBC2EDFBA26006F5651 /* SonderDTOs in Frameworks */ = {isa = PBXBuildFile; productRef = C61DEDBB2EDFBA26006F5651 /* SonderDTOs */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C64514852ED36BD40066510E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +35,22 @@
 		C645148E2ED36BD40066510E /* sonderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sonderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C61DEDB92EDFB2F6006F5651 /* Exceptions for "sonder" folder in "sonder" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C64514762ED36BD10066510E /* sonder */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C64514792ED36BD10066510E /* sonder */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C61DEDB92EDFB2F6006F5651 /* Exceptions for "sonder" folder in "sonder" target */,
+			);
 			path = sonder;
 			sourceTree = "<group>";
 		};
@@ -52,6 +71,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C61DEDA12EDF8270006F5651 /* GoogleSignIn in Frameworks */,
+				C61DEDBC2EDFBA26006F5651 /* SonderDTOs in Frameworks */,
+				C61DEDA32EDF8270006F5651 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +94,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C61DEDBA2EDFBA26006F5651 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C645146E2ED36BD10066510E = {
 			isa = PBXGroup;
 			children = (
 				C64514792ED36BD10066510E /* sonder */,
 				C64514872ED36BD40066510E /* sonderTests */,
 				C64514912ED36BD40066510E /* sonderUITests */,
+				C61DEDBA2EDFBA26006F5651 /* Frameworks */,
 				C64514782ED36BD10066510E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +142,9 @@
 			);
 			name = sonder;
 			packageProductDependencies = (
+				C61DEDA02EDF8270006F5651 /* GoogleSignIn */,
+				C61DEDA22EDF8270006F5651 /* GoogleSignInSwift */,
+				C61DEDBB2EDFBA26006F5651 /* SonderDTOs */,
 			);
 			productName = sonder;
 			productReference = C64514772ED36BD10066510E /* sonder.app */;
@@ -195,6 +228,11 @@
 			);
 			mainGroup = C645146E2ED36BD10066510E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C61DED452EDF78C1006F5651 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				C61DED462EDF78E3006F5651 /* XCLocalSwiftPackageReference "../SonderDTOs" */,
+				C61DED9F2EDF8270006F5651 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C64514782ED36BD10066510E /* Products */;
 			projectDirPath = "";
@@ -400,12 +438,14 @@
 				DEVELOPMENT_TEAM = 72G497WR8Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = sonder/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Sonder;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -414,12 +454,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sampleware.sonder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -433,12 +477,14 @@
 				DEVELOPMENT_TEAM = 72G497WR8Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = sonder/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Sonder;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -447,12 +493,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sampleware.sonder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -580,6 +630,50 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C61DED462EDF78E3006F5651 /* XCLocalSwiftPackageReference "../SonderDTOs" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../SonderDTOs;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C61DED452EDF78C1006F5651 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.62.2;
+			};
+		};
+		C61DED9F2EDF8270006F5651 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C61DEDA02EDF8270006F5651 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C61DED9F2EDF8270006F5651 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		C61DEDA22EDF8270006F5651 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C61DED9F2EDF8270006F5651 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		C61DEDBB2EDFBA26006F5651 /* SonderDTOs */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C61DED462EDF78E3006F5651 /* XCLocalSwiftPackageReference "../SonderDTOs" */;
+			productName = SonderDTOs;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C645146F2ED36BD10066510E /* Project object */;
 }
