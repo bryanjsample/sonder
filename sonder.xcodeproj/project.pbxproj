@@ -36,20 +36,31 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C61DEDB92EDFB2F6006F5651 /* Exceptions for "sonder" folder in "sonder" target */ = {
+		C61DEDDA2EE3957C006F5651 /* Exceptions for "sonder" folder in "sonder" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Info.plst,
 			);
 			target = C64514762ED36BD10066510E /* sonder */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		C61DEDDB2EE3957C006F5651 /* Exceptions for "sonder" folder in "Compile Sources" phase from "sonder" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = C64514732ED36BD10066510E /* Sources */;
+			membershipExceptions = (
+				Info.plst,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C64514792ED36BD10066510E /* sonder */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				C61DEDB92EDFB2F6006F5651 /* Exceptions for "sonder" folder in "sonder" target */,
+				C61DEDDA2EE3957C006F5651 /* Exceptions for "sonder" folder in "sonder" target */,
+				C61DEDDB2EE3957C006F5651 /* Exceptions for "sonder" folder in "Compile Sources" phase from "sonder" target */,
 			);
 			path = sonder;
 			sourceTree = "<group>";
