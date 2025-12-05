@@ -12,6 +12,13 @@ import GoogleSignIn
 struct sonderApp: App {
     var body: some Scene {
         WindowGroup {
+            TabView {
+                CircleFeedView()
+            }
+            
+            
+            
+            
             LoginView()
                 .onAppear {
                     GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
