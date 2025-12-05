@@ -19,7 +19,7 @@ struct LoginView: View {
             Spacer()
             Spacer()
         }
-        .padding()
+        .padding(Constants.padding)
     }
 }
 

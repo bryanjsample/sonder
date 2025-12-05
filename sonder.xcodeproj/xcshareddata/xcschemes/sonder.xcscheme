@@ -81,12 +81,12 @@
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "GOOGLE_CLIENT_ID"
+            key = "GID_CLIENT_ID"
             value = "41328959206-je81fakbmpe9aodqrram2q8t9sffshot.apps.googleusercontent.com "
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "GOOGLE_URL_SCHEME"
+            key = "GID_REVERSED_CLIENT_ID"
             value = "com.googleusercontent.apps.41328959206-je81fakbmpe9aodqrram2q8t9sffshot"
             isEnabled = "YES">
          </EnvironmentVariable>

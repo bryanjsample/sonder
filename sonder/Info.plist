@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>GIDClientID</key>
-    <string>41328959206-je81fakbmpe9aodqrram2q8t9sffshot.apps.googleusercontent.com</string>
+    <string>$(GID_CLIENT_ID)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.41328959206-je81fakbmpe9aodqrram2q8t9sffshot</string>
+                <string>$(GID_REVERSED_CLIENT_ID)</string>
 			</array>
 		</dict>
 	</array>

@@ -13,9 +13,9 @@ final class DefaultAPIClient {
     
     private let SERVER_BASE_URL = ProcessInfo.processInfo.environment["SERVER_BASE_URL"]
     
-    static func signInWithGoogle(_ user: UserDTO) async throws -> TokenResponseDTO { // /auth/google/success get change to POST
-        
-    }
+//    func signInWithGoogle(_ user: UserDTO) async throws -> TokenResponseDTO { // /auth/google/success get change to POST
+//        return TokenResponseDTO(accessToken: AccessTokenDTO(token: "TOKEN", ownerID: UUID(), expiresAt: Date.now, revoked: false), refreshToken: RefreshTokenDTO(token: "TOKEN", ownerID: UUID(), expiresAt: Date.now, revoked: false))
+//    }
 //    
 //    func requestNewToken() async throws -> TokenResponseDTO // /auth/refresh get
 //    

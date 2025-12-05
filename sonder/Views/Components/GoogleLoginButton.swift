@@ -38,7 +38,7 @@ extension GoogleLoginButton {
 
             let user = result.user
             
-            let userDTO = user.toDTO()
+            _ = user.toDTO()
             
             /*Look at GoogleLoginButton.swift at the handlePress() function. I have written in pseudocode what I would like the function to do. What is the best way to do this considering it is located within the closure for GIDSignIn?*/
             
@@ -71,7 +71,7 @@ extension GIDGoogleUser {
             // handle if no profile is included.... shouldnt be the case
             return UserDTO(email: "", firstName: "", lastName: "")
         }
-        var dto = UserDTO(email: profile.email, firstName: profile.givenName ?? "", lastName: profile.familyName ?? "")
+        let dto = UserDTO(email: profile.email, firstName: profile.givenName ?? "", lastName: profile.familyName ?? "")
         return dto
         
     }
