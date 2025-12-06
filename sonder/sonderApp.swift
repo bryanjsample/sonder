@@ -11,12 +11,12 @@ import SonderDTOs
 
 @main
 struct sonderApp: App {
-    
-    @State var authVM = AuthViewModel()
+
+    @State private var authVM = AuthViewModel()
     
     var body: some Scene {
         WindowGroup {
-            RootView(authVM: $authVM)
+            RootView(authVM: authVM)
                 .onAppear {
                     authVM.startup()
                 }
@@ -25,29 +25,19 @@ struct sonderApp: App {
 }
 
 private struct RootView: View {
-    @Binding var authVM: AuthViewModel
+    @Bindable var authVM: AuthViewModel
 
     var body: some View {
         Group {
-            switch authVM.state {
+            switch authVM.status {
             case .loading:
-                SplashView() // simple loading view or progress indicator
+                SplashView()
             case .authenticatedInCircle:
-                LandingPageView()
+                LandingPageView(authVM: authVM)
             case .authenticatedNotInCircle:
-                CircleInviteCodeView()
+                CircleInviteCodeView(authVM: authVM)
             case .unauthenticated:
-                LoginView()
-                    .onAppear {
-                        GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
-                            if let info = user {
-                                print(info)
-                            }
-                            if let err = error {
-                                print(err)
-                            }
-                        }
-                    }
+                LoginView(authVM: authVM)
                     .onOpenURL { url in
                         GIDSignIn.sharedInstance.handle(url)
                     }
@@ -59,7 +49,7 @@ private struct RootView: View {
                         authVM.startup()
                     }
                 }
-                .padding()
+                .padding(Constants.padding)
             }
         }
     }

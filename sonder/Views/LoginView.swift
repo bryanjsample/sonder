@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct LoginView: View {
+    @Bindable var authVM: AuthViewModel
+    
     var body: some View {
         VStack {
             Spacer()
@@ -15,7 +17,7 @@ struct LoginView: View {
             subText
             emojiRow
             Spacer()
-            GoogleLoginButton()
+            GoogleLoginButton(authVM: authVM)
             Spacer()
             Spacer()
         }
@@ -34,7 +36,6 @@ extension LoginView {
     var subText: some View {
         Text("get connected with your circle")
             .font(.caption)
-            .fontWeight(.light)
             .multilineTextAlignment(.center)
     }
     
@@ -51,6 +52,6 @@ extension LoginView {
     }
 }
 
-#Preview {
-    LoginView()
-}
+//#Preview {
+//    LoginView()
+//}

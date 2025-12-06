@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LandingPageView: View {
     @State var tabSelection: TabRoute = .feed
+    @Bindable var authVM: AuthViewModel
     
     var body: some View {
         TabView(selection: $tabSelection) {
@@ -22,7 +23,7 @@ struct LandingPageView: View {
                 CreateFeedItemView()
             }
             Tab("Circles", systemImage: "person.3", value: .circles) {
-                CircleInviteCodeView() // Implement view to see all circles and tap into their feeds
+                CirclesView()
             }
             Tab("Me", systemImage: "person", value: .profile) {
                 UserProfileView()

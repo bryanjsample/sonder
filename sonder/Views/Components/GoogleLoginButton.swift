@@ -11,6 +11,8 @@ import GoogleSignInSwift
 import SonderDTOs
 
 struct GoogleLoginButton: View {
+    @Bindable var authVM: AuthViewModel
+    
     var body: some View {
         googleButton
     }
@@ -74,7 +76,7 @@ extension GIDGoogleUser {
         
     }
 }
-
-#Preview {
-    GoogleLoginButton()
-}
+//
+//#Preview {
+//    GoogleLoginButton()
+//}

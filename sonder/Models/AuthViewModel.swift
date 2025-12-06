@@ -9,7 +9,7 @@ import SwiftUI
 import SonderDTOs
 import GoogleSignIn
 
-enum AuthState: Equatable {
+enum AuthStatus: Equatable {
     case loading
     case authenticatedInCircle
     case authenticatedNotInCircle
@@ -17,11 +17,12 @@ enum AuthState: Equatable {
     case error(String)
 }
 
+@Observable
 final class AuthViewModel {
-    @State var state: AuthState = .unauthenticated
 
     private let authManager: AuthClient.AuthManager
     private let authService: AuthClient.AuthService
+    var status: AuthStatus = .loading
 
     init(authManager: AuthClient.AuthManager = AuthClient.AuthManager(),
          authService: AuthClient.AuthService = AuthClient.AuthService()) {
@@ -34,18 +35,31 @@ final class AuthViewModel {
     }
 
     func restoreSession() {
-        if let tokens = authManager.loadTokens() {
+        GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+            if let info = user {
+                print("Session restored user = \(info.profile!.email)")
+                self.status = .authenticatedInCircle
+                return
+            }
+            if let err = error {
+                print(err)
+                self.status = .unauthenticated
+                return
+            }
+        }
+        
+        if let _ = authManager.loadTokens() {
             // Optional: validate/refresh with backend
 //            do {
 //                try await authService.validate(tokens: tokens)
-                state = .authenticatedInCircle
+            status = .authenticatedInCircle
 //                return
 //            } catch {
 //                // Tokens invalid/expired
 //            }
+        } else {
+            status = .unauthenticated
         }
-
-        state = .unauthenticated
     }
 
     func completeGoogleSignIn(userDTO: UserDTO, idToken: String?) async {
@@ -53,16 +67,16 @@ final class AuthViewModel {
             // Exchange Google credentials with your backend for app tokens
             let result = try await authService.signInWithGoogle(userDTO)
             _ = authManager.storeTokens(access: result.accessToken.token, refresh: result.refreshToken.token)
-            state = .authenticatedInCircle
+            status = .authenticatedInCircle
         } catch {
-            state = .error(error.localizedDescription)
+            status = .error(error.localizedDescription)
         }
     }
 
     func signOut() {
         authManager.clearTokens()
         GIDSignIn.sharedInstance.signOut()
-        state = .unauthenticated
+        status = .unauthenticated
     }
 }
 

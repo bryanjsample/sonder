@@ -15,8 +15,8 @@ struct AuthClient {
             // save tokens to keychain
         }
         
-        func loadTokens() -> TokenResponseDTO? {
-            return nil
+        func loadTokens() -> String? {
+            return " "
         }
         
         func clearTokens() {
