@@ -20,8 +20,8 @@ enum AuthStatus: Equatable {
 @Observable
 final class AuthViewModel {
 
-    private let authManager: AuthClient.AuthManager
-    private let authService: AuthClient.AuthService
+    let authManager: AuthClient.AuthManager
+    let authService: AuthClient.AuthService
     var status: AuthStatus = .loading
 
     init(authManager: AuthClient.AuthManager = AuthClient.AuthManager(),
@@ -35,10 +35,26 @@ final class AuthViewModel {
     }
 
     func restoreSession() {
+        
+        if let _ = authManager.loadTokens() {
+            // Optional: validate/refresh with backend
+//            do {
+//                try await authService.validate(tokens: tokens)
+            status = .unauthenticated
+//                return
+//            } catch {
+//                // Tokens invalid/expired
+//            }
+        } else {
+            restoreGoogleInstance()
+        }
+    }
+    
+    func restoreGoogleInstance() {
         GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
             if let info = user {
                 print("Session restored user = \(info.profile!.email)")
-                self.status = .authenticatedInCircle
+                self.status = .unauthenticated
                 return
             }
             if let err = error {
@@ -47,31 +63,17 @@ final class AuthViewModel {
                 return
             }
         }
-        
-        if let _ = authManager.loadTokens() {
-            // Optional: validate/refresh with backend
-//            do {
-//                try await authService.validate(tokens: tokens)
-            status = .authenticatedInCircle
-//                return
-//            } catch {
-//                // Tokens invalid/expired
-//            }
-        } else {
-            status = .unauthenticated
-        }
     }
 
-    func completeGoogleSignIn(userDTO: UserDTO, idToken: String?) async {
-        do {
-            // Exchange Google credentials with your backend for app tokens
-            let result = try await authService.signInWithGoogle(userDTO)
-            _ = authManager.storeTokens(access: result.accessToken.token, refresh: result.refreshToken.token)
-            status = .authenticatedInCircle
-        } catch {
-            status = .error(error.localizedDescription)
-        }
-    }
+//    func completeGoogleSignIn() async {
+//        do {
+//            let result = try await authService.signInWithGoogle(userDTO)
+//            _ = authManager.storeTokens(access: result.accessToken.token, refresh: result.refreshToken.token)
+//            status = .authenticatedInCircle
+//        } catch {
+//            status = .error(error.localizedDescription)
+//        }
+//    }
 
     func signOut() {
         authManager.clearTokens()

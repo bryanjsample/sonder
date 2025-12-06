@@ -26,34 +26,36 @@ extension GoogleLoginButton {
             return
         }
         
-        GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
-            if let error = error {
-                // Handle the error without throwing
-                print("Google Sign-In failed: \(error.localizedDescription)")
-                return
-            }
-
-            guard let result = signInResult else {
-                print("Google Sign-In: No result returned")
-                return
-            }
-
-            let user = result.user
-            
-            _ = user.toDTO()
-            
-            // SEND HTTP REQUEST TO /auth/google/success TO OBTAIN ACCESS AND REFRESH KEYS
-            
-            // DETERMINE IF USER ALREADY EXISTS SEND BACK BOOL FROM SERVER
-            
-            // IF USER EXISTS
-                // IF USER IS IN A GROUP, ADVANCE TO HOMPAGE
-                // ELSE ADVANCE TO INVITATION VIEW
-            // ELSE
-                // ADVANCE TO ONBOARDING VIEW PASSING IN USERDTO TO FILL IN SHEET WITH APPROPRIATE SLOTS
-            
-            print("Google Sign-In succeeded for user: \(result.user.profile?.email ?? "<unknown>")")
-        }
+        authVM.authService.completeGoogleOAuth(presentingVC: presentingVC)
+        
+//        GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
+//            if let error = error {
+//                // Handle the error without throwing
+//                print("Google Sign-In failed: \(error.localizedDescription)")
+//                return
+//            }
+//
+//            guard let result = signInResult else {
+//                print("Google Sign-In: No result returned")
+//                return
+//            }
+//
+//            let user = result.user
+//            
+//            _ = user.toDTO()
+//            
+//            // SEND HTTP REQUEST TO /auth/google/success TO OBTAIN ACCESS AND REFRESH KEYS
+//            
+//            // DETERMINE IF USER ALREADY EXISTS SEND BACK BOOL FROM SERVER
+//            
+//            // IF USER EXISTS
+//                // IF USER IS IN A GROUP, ADVANCE TO HOMPAGE
+//                // ELSE ADVANCE TO INVITATION VIEW
+//            // ELSE
+//                // ADVANCE TO ONBOARDING VIEW PASSING IN USERDTO TO FILL IN SHEET WITH APPROPRIATE SLOTS
+//            
+//            print("Google Sign-In succeeded for user: \(result.user.profile?.email ?? "<unknown>")")
+//        }
         
         
         
