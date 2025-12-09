@@ -9,6 +9,17 @@ import SwiftUI
 
 struct SplashView: View {
     var body: some View {
-        Text("Loading...")
+        VStack {
+            Spacer()
+            SonderTitleText.titleBlock
+            Spacer()
+            ProgressView()
+            Spacer()
+            Spacer()
+        }
     }
+}
+
+#Preview {
+    SplashView()
 }
