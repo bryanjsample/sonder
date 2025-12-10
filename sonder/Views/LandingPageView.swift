@@ -9,7 +9,6 @@ import SwiftUI
 
 struct LandingPageView: View {
     @State var tabSelection: TabRoute = .feed
-    @Bindable var authVM: AuthViewModel
     
     var body: some View {
         TabView(selection: $tabSelection) {
@@ -33,5 +32,5 @@ struct LandingPageView: View {
 }
 
 #Preview {
-    LandingPageView(authVM: AuthViewModel())
+    LandingPageView()
 }

@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct CircleOnboardingView: View {
-    @State var tabSelection: CircleOnboardingRoute = .invite
+    
     @Bindable var authVM: AuthViewModel
+    @State var tabSelection: CircleOnboardingRoute = .invite
     
     var body: some View {
         TabView(selection: $tabSelection) {
             Tab("Invitation", systemImage: "envelope.open", value: .invite) {
-                CircleInviteCodeView()
+                CircleInviteCodeView(authVM: authVM)
             }
             Tab("Create", systemImage: "plus", value: .create) {
-                CreateCircleView()
+                CreateCircleView(authVM: authVM)
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  OnboardingView.swift
+//  UserOnboardingView.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/2/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OnboardingView: View {
+struct UserOnboardingView: View {
     
     @Bindable var authVM: AuthViewModel
     @State var firstName: String = ""
@@ -16,15 +16,23 @@ struct OnboardingView: View {
     @State var username: String = ""
     
     var body: some View {
-        Spacer()
-        SonderTitleText.titleBlock
-        ProfilePicturePicker(defaultSystemImage: "person.circle.fill")
-        onboardingForm
-        submitButton
+        ZStack {
+            
+            BackgroundColor()
+                .ignoresSafeArea(.all)
+            
+            VStack {
+                Spacer()
+                SonderTitleText.titleBlock
+                ProfilePicturePicker(defaultSystemImage: "person.circle.fill")
+                onboardingForm
+                submitButton
+            }
+        }
     }
 }
 
-extension OnboardingView {
+extension UserOnboardingView {
     var onboardingForm: some View {
         Form {
             Section("User Information") {
@@ -38,11 +46,13 @@ extension OnboardingView {
                     .textInputAutocapitalization(.never)
             }
         }
+        .scrollDisabled(true)
+        .scrollContentBackground(.hidden)
     }
     
     var submitButton: some View {
         Button() {
-            print("Created User")
+            authVM.createUser()
         } label: {
             Text("Create User")
                 .frame(maxWidth: .infinity)
@@ -55,5 +65,5 @@ extension OnboardingView {
 }
 
 #Preview {
-    OnboardingView(authVM: AuthViewModel())
+    UserOnboardingView(authVM: AuthViewModel())
 }

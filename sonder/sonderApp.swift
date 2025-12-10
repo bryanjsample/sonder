@@ -32,10 +32,10 @@ private struct RootView: View {
             switch authVM.status {
             case .loading:
                 SplashView()
-            case .notOnboarded:
-                OnboardingView(authVM: authVM)
             case .authenticatedInCircle:
-                LandingPageView(authVM: authVM)
+                LandingPageView()
+            case .notOnboarded:
+                UserOnboardingView(authVM: authVM)
             case .authenticatedNotInCircle:
                 CircleOnboardingView(authVM: authVM)
             case .unauthenticated:

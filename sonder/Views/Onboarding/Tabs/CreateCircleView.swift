@@ -9,8 +9,10 @@ import SwiftUI
 
 struct CreateCircleView: View {
     
+    @Bindable var authVM: AuthViewModel
     @State private var name: String = ""
     @State private var description: String = ""
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         SonderTitleText.titleBlock
@@ -28,23 +30,26 @@ extension CreateCircleView {
                 descriptionInput
             }
         }
+        .scrollDisabled(true)
+        .scrollContentBackground(.hidden)
     }
     
     var descriptionInput: some View {
         ZStack(alignment: .topLeading) {
-            if description.isEmpty {
+            if !isFocused && description.isEmpty {
                 Text("Circle Description...")
                     .allowsHitTesting(false)
                     .opacity(0.30)
             }
             
             TextEditor(text: $description)
+                .focused($isFocused)
         }
     }
     
     var submitButton: some View {
         Button() {
-            print("Created circle")
+            authVM.createCircle()
         } label: {
             Text("Create Circle")
                 .frame(maxWidth: .infinity)
@@ -57,5 +62,5 @@ extension CreateCircleView {
 }
 
 #Preview {
-    CreateCircleView()
+    CreateCircleView(authVM: AuthViewModel())
 }

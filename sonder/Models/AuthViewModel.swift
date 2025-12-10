@@ -60,6 +60,25 @@ final class AuthViewModel {
             }
         }
     }
+    
+    func completeGoogleOAuth(presentingVC: UIViewController) {
+        GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
+            if let error = error {
+                // Handle the error without throwing
+                print("Google Sign-In failed: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let result = signInResult else {
+                print("Google Sign-In: No result returned")
+                return
+            }
+            
+            print("Google Sign-In succeeded for user: \(result.user.profile?.email ?? "<unknown>")")
+            
+            self.signIn()
+        }
+    }
 
 //    func completeGoogleSignIn() async {
 //        do {
@@ -70,6 +89,18 @@ final class AuthViewModel {
 //            status = .error(error.localizedDescription)
 //        }
 //    }
+    
+    func signIn() {
+        status = .notOnboarded
+    }
+    
+    func createUser() {
+        status = .authenticatedNotInCircle
+    }
+    
+    func createCircle() {
+        status = .authenticatedInCircle
+    }
 
     func signOut() {
         authManager.clearTokens()

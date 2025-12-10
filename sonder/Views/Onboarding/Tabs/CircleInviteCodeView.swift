@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CircleInviteCodeView: View {
+    
+    @Bindable var authVM: AuthViewModel
     @State private var circleInviteCode: String = ""
     
     var body: some View {
@@ -25,11 +27,13 @@ extension CircleInviteCodeView {
                 TextField("Invite Code", text: $circleInviteCode)
             }
         }
+        .scrollDisabled(true)
+        .scrollContentBackground(.hidden)
     }
     
     var submitButton: some View {
         Button() {
-            print("Joined circle")
+            authVM.createCircle()
         } label: {
             Text("Join Circle")
                 .frame(maxWidth: .infinity)
@@ -42,5 +46,5 @@ extension CircleInviteCodeView {
 }
 
 #Preview {
-    CircleInviteCodeView()
+    CircleInviteCodeView(authVM: AuthViewModel())
 }
