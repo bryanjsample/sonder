@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LandingPageView: View {
-    @State var tabSelection: TabRoute = .feed
+    @State var tabSelection: LandingPageRoute = .feed
     
     var body: some View {
         TabView(selection: $tabSelection) {

@@ -10,21 +10,15 @@ import SonderDTOs
 import GoogleSignIn
 
 enum AuthStatus: Equatable {
-    case loading, notOnboarded, authenticatedInCircle, authenticatedNotInCircle, unauthenticated, error(String)
+    case loading, notOnboarded, authenticatedNotInCircle, authenticatedInCircle, unauthenticated, error(String)
 }
 
 @Observable
 final class AuthViewModel {
 
-    let authManager: AuthClient.AuthManager
-    let authService: AuthClient.AuthService
     var status: AuthStatus = .loading
 
-    init(authManager: AuthClient.AuthManager = AuthClient.AuthManager(),
-         authService: AuthClient.AuthService = AuthClient.AuthService()) {
-        self.authManager = authManager
-        self.authService = authService
-    }
+    init() { }
 
     func startup() {
         restoreSession()
@@ -32,7 +26,7 @@ final class AuthViewModel {
 
     func restoreSession() {
         
-        if let _ = authManager.loadTokens() {
+        if let _ = self.loadTokens() {
             // Optional: validate/refresh with backend
 //            do {
 //                try await authService.validate(tokens: tokens)
@@ -79,16 +73,18 @@ final class AuthViewModel {
             self.signIn()
         }
     }
-
-//    func completeGoogleSignIn() async {
-//        do {
-//            let result = try await authService.signInWithGoogle(userDTO)
-//            _ = authManager.storeTokens(access: result.accessToken.token, refresh: result.refreshToken.token)
-//            status = .authenticatedInCircle
-//        } catch {
-//            status = .error(error.localizedDescription)
-//        }
-//    }
+    
+    func storeTokens(access: String, refresh: String) -> TokenResponseDTO? {
+        return nil
+    }
+    
+    func loadTokens() -> TokenResponseDTO? {
+        return nil
+    }
+    
+    func clearTokens() {
+        
+    }
     
     func signIn() {
         status = .notOnboarded
@@ -103,7 +99,7 @@ final class AuthViewModel {
     }
 
     func signOut() {
-        authManager.clearTokens()
+        self.clearTokens()
         GIDSignIn.sharedInstance.signOut()
         status = .unauthenticated
     }

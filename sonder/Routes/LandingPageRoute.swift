@@ -1,10 +1,10 @@
 //
-//  TabRoute.swift
+//  LandingPageRoute.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/5/25.
 //
 
-enum TabRoute {
+enum LandingPageRoute {
     case feed, calendar, post, circles, profile
 }
