@@ -19,7 +19,7 @@ struct OnboardingView: View {
     var body: some View {
         Spacer()
         SonderTitleText.titleBlock
-        ProfilePicturePicker()
+        ProfilePicturePicker(defaultSystemImage: "person.circle.fill")
         onboardingForm
         submitButton
     }

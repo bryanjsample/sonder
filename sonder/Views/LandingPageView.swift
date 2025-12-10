@@ -31,3 +31,7 @@ struct LandingPageView: View {
         }
     }
 }
+
+#Preview {
+    LandingPageView(authVM: AuthViewModel())
+}

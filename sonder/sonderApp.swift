@@ -35,7 +35,7 @@ private struct RootView: View {
             case .authenticatedInCircle:
                 LandingPageView(authVM: authVM)
             case .authenticatedNotInCircle:
-                CircleInviteCodeView(authVM: authVM)
+                CreateCircleView()
             case .unauthenticated:
                 LoginView(authVM: authVM)
                     .onOpenURL { url in

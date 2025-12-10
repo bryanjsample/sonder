@@ -11,6 +11,8 @@ import PhotosUI
 struct ProfilePicturePicker: View {
     @State private var profilePictureItem: PhotosPickerItem?
     @State private var profilePicture: Image?
+    var defaultSystemImage: String
+    
     var body: some View {
             PhotosPicker(selection: $profilePictureItem, matching: .images) {
             if let profilePicture {
@@ -20,7 +22,7 @@ struct ProfilePicturePicker: View {
                     .frame(width: 100, height: 100)
                     .clipShape(.circle)
             } else {
-                Image(systemName: "person.circle.fill")
+                Image(systemName: defaultSystemImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 100, height: 100)
