@@ -32,10 +32,12 @@ private struct RootView: View {
             switch authVM.status {
             case .loading:
                 SplashView()
+            case .notOnboarded:
+                OnboardingView(authVM: authVM)
             case .authenticatedInCircle:
                 LandingPageView(authVM: authVM)
             case .authenticatedNotInCircle:
-                CreateCircleView()
+                CircleOnboardingView(authVM: authVM)
             case .unauthenticated:
                 LoginView(authVM: authVM)
                     .onOpenURL { url in

@@ -9,12 +9,11 @@ import SwiftUI
 
 struct OnboardingView: View {
     
+    @Bindable var authVM: AuthViewModel
     @State var firstName: String = ""
     @State var lastName: String = ""
     @State var email: String = ""
     @State var username: String = ""
-    @State var circleInviteCode: String = ""
-    // picture
     
     var body: some View {
         Spacer()
@@ -38,31 +37,23 @@ extension OnboardingView {
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
             }
-            
-            Section("Circle Information") {
-                TextField("Circle Invitation Code", text: $circleInviteCode)
-            }
         }
     }
     
     var submitButton: some View {
         Button() {
-            print("Joined circle")
+            print("Created User")
         } label: {
-            buttonText
+            Text("Create User")
+                .frame(maxWidth: .infinity)
+                .padding(Constants.padding)
         }
         .buttonStyle(.glassProminent)
         .padding(Constants.padding)
-    }
-    
-    var buttonText: some View {
-        Text(circleInviteCode.isEmpty ? "Create Circle" : "Join Circle")
-            .frame(maxWidth: .infinity) //  minHeight: 35.0
-            .padding(Constants.padding)
-        
+        .fontWeight(.bold)
     }
 }
 
 #Preview {
-    OnboardingView()
+    OnboardingView(authVM: AuthViewModel())
 }

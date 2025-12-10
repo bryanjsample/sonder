@@ -13,7 +13,6 @@ struct CreateCircleView: View {
     @State private var description: String = ""
     
     var body: some View {
-        Spacer()
         SonderTitleText.titleBlock
         ProfilePicturePicker(defaultSystemImage: "figure.socialdance.circle.fill")
         circleForm
@@ -53,6 +52,7 @@ extension CreateCircleView {
         }
         .buttonStyle(.glassProminent)
         .padding(Constants.padding)
+        .fontWeight(.bold)
     }
 }
 

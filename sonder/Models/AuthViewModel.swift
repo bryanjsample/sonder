@@ -10,11 +10,7 @@ import SonderDTOs
 import GoogleSignIn
 
 enum AuthStatus: Equatable {
-    case loading
-    case authenticatedInCircle
-    case authenticatedNotInCircle
-    case unauthenticated
-    case error(String)
+    case loading, notOnboarded, authenticatedInCircle, authenticatedNotInCircle, unauthenticated, error(String)
 }
 
 @Observable
