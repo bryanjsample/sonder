@@ -10,18 +10,25 @@ import Foundation
 import GoogleSignIn
 
 final class DefaultAPIClient: APIClient {
-    private let serverBaseURL = ProcessInfo.processInfo.environment["SERVER_BASE_URL"]
     
-    // serverbaseurl/auth/ios POST
-    func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO? {
-        guard let serverBaseURL else {
+    private func getURL(_ endpoint: String) -> URL? {
+        guard let serverBaseURL = ProcessInfo.processInfo.environment["SERVER_BASE_URL"] else {
             print("Server base URL is not defined")
             return nil
         }
-        let urlString = serverBaseURL + "/auth/ios"
+        let urlString = serverBaseURL + endpoint
         print("request url = \(urlString)")
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
+            return nil
+        }
+        return url
+    }
+    
+    // serverbaseurl/auth/ios POST
+    func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO? {
+        guard let url = self.getURL("/auth/ios") else {
+            print("URL is nil in authenticateViaGoogle")
             return nil
         }
         
@@ -45,8 +52,35 @@ final class DefaultAPIClient: APIClient {
     }
     
 //    func requestNewToken() async throws -> TokenResponseDTO // /auth/refresh get
-//    
-//    func fetchUser() async throws -> UserDTO // /me get
+//
+    
+    // /serverbaseurl/me GET
+    func fetchUser(_ accessToken: TokenStringDTO) async throws -> UserDTO? {
+        guard let url = self.getURL("/me") else {
+            print("user is nil is fetcUser")
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken.token)", forHTTPHeaderField: "Authorization")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse fetch user = \(httpResponse)")
+        print("fetchUser status = \(httpResponse.statusCode)")
+        
+        let user = try JSONDecoder().decode(UserDTO.self, from: data)
+        print("GET SUCCESS: user = \(user)")
+        return user
+    }
+    
 //    func editUser(_ user: UserDTO) async throws -> UserDTO // /me patch
 //    func removeUser() async throws // /me delete
 //    func fetchUserEvents() async throws -> [CalendarEventDTO] // /me/events get

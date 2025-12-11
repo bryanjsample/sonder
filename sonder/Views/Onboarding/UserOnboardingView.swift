@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SonderDTOs
 
 struct UserOnboardingView: View {
     
@@ -25,7 +26,12 @@ struct UserOnboardingView: View {
                 Spacer()
                 SonderTitleText.titleBlock
                 ProfilePicturePicker(defaultSystemImage: "person.circle.fill")
-                onboardingForm
+                onboardingForm.onAppear {
+                    firstName = onboardingModel.user?.firstName ?? ""
+                    lastName = onboardingModel.user?.lastName ?? ""
+                    email = onboardingModel.user?.email ?? ""
+                    username = onboardingModel.user?.username ?? ""
+                }
                 submitButton
             }
         }

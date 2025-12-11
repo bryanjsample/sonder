@@ -58,39 +58,47 @@ final class OnboardingClient {
             let tokenClient = TokenClient()
             
             Task {
-                if let tokens = try await apiClient.authenticateViaGoogle(token) {
-
-                    await tokenClient.storeTokens(with: onboardingModel, tokens: tokens)
-                    
-                    await tokenClient.loadTokens(with: onboardingModel)
-                    
-                    await tokenClient.clearTokens(with: onboardingModel)
-
-                    if let needsOnboarding = tokens.userNeedsToBeOnboarded {
-                        if needsOnboarding {
-                            await onboardingModel.notOnboarded()
-                            return
-                            // return from task to main thread
-                        }
-                    }
-                        
-                    if let userInCircle = tokens.userInCircle {
-                        if userInCircle {
-                            await onboardingModel.authenticatedInCircle()
-                            return
-                            // return from task to main thread
-                        } else {
-                            await onboardingModel.authenticatedNotInCircle()
-                            return
-                            // return from task to main thread
-                        }
-                    }
-                } else {
+                guard let tokens = try await apiClient.authenticateViaGoogle(token) else {
                     await onboardingModel.unauthenticated()
                     print("tokens returned nil in completeGoogleOAuth")
-                    // return from task to main thread
+                    return
+                }
+
+                await tokenClient.storeTokens(with: onboardingModel, tokens: tokens)
+                
+                guard let accessToken = await tokenClient.loadAccessToken(with: onboardingModel) else {
+                    print("accessToken is nil in task, implement solution to reassign token and store properly")
+                    throw CancellationError()
                 }
                 
+                print("from task: accessToken = \(accessToken!)")
+                
+                guard let user = try await apiClient.fetchUser(accessToken!) else {
+                    print("user info is nil in taks, implement solution to receive data accurately from server")
+                    return
+                }
+                
+                print("from task: user = \(user)")
+
+                if let needsOnboarding = tokens.userNeedsToBeOnboarded {
+                    if needsOnboarding {
+                        await onboardingModel.notOnboarded(user)
+                        return
+                        // return from task to main thread
+                    }
+                }
+                    
+                if let userInCircle = tokens.userInCircle {
+                    if userInCircle {
+                        await onboardingModel.authenticatedInCircle()
+                        return
+                        // return from task to main thread
+                    } else {
+                        await onboardingModel.authenticatedNotInCircle()
+                        return
+                        // return from task to main thread
+                    }
+                }
             }
             
             print("Google Sign-In succeeded for user: \(result.user.profile?.email ?? "<unknown>")")
@@ -112,18 +120,6 @@ final class OnboardingClient {
                 return
             }
         }
-    }
-    
-    func signIn(with onboardingModel: OnboardingModel) {
-        
-    }
-    
-    func createUser(with onboardingModel: OnboardingModel) {
-        
-    }
-    
-    func createCircle(with onboardingModel: OnboardingModel) {
-        
     }
     
     func signOut(with onboardingModel: OnboardingModel) {

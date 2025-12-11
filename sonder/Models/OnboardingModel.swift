@@ -17,27 +17,29 @@ enum AuthStatus: Equatable {
 final class OnboardingModel {
 
     var status: AuthStatus = .unauthenticated
+    var user: UserDTO? = nil
 
     init() { }
     
-    func notOnboarded() {
-        status = .notOnboarded
+    func notOnboarded(_ user: UserDTO) {
+        self.status = .notOnboarded
+        self.user = user
     }
     
     func authenticatedNotInCircle() {
-        status = .authenticatedNotInCircle
+        self.status = .authenticatedNotInCircle
     }
     
     func authenticatedInCircle() {
-        status = .authenticatedInCircle
+        self.status = .authenticatedInCircle
     }
     
     func unauthenticated() {
-        status = .unauthenticated
+        self.status = .unauthenticated
     }
     
     func loading() {
-        status = .loading
+        self.status = .loading
     }
 }
 

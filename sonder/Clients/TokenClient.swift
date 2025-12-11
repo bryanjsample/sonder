@@ -15,18 +15,22 @@ final class TokenClient {
     
     func storeAccessToken(with onboardingModel: OnboardingModel, accessToken: AccessTokenDTO) {
         let service = "com.sonder.keys.access"
-        let account = accessToken.ownerID.uuidString
-        let data = accessToken.token.data(using: .utf8)!
+//        let account = accessToken.ownerID.uuidString
+        guard let data = accessToken.token.data(using: .utf8) else {
+            print("access store data is nil")
+            return
+        }
         let addAccessQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                              kSecAttrService as String: service,
-                                             kSecAttrAccount as String: account,
+//                                             kSecAttrAccount as String: account,
                                              kSecValueData as String: data,
                                              kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly]
         
         let accessStatus = SecItemAdd(addAccessQuery as CFDictionary, nil)
         guard accessStatus == errSecSuccess else {
-            let message = SecCopyErrorMessageString(accessStatus, nil)
-            print("access status = \(message!)")
+            if let message = SecCopyErrorMessageString(accessStatus, nil) {
+                print("access store status = \(message)")
+            }
             return
         }
         
@@ -36,18 +40,22 @@ final class TokenClient {
     func storeRefreshToken(with onboardingModel: OnboardingModel, refreshToken: RefreshTokenDTO) {
         
         let service = "com.sonder.keys.refresh"
-        let account = refreshToken.ownerID.uuidString
-        let data = refreshToken.token.data(using: .utf8)!
+//        let account = refreshToken.ownerID.uuidString
+        guard let data = refreshToken.token.data(using: .utf8) else {
+            print("refresh store data is nil")
+            return
+        }
         let addRefreshQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                              kSecAttrService as String: service,
-                                             kSecAttrAccount as String: account,
+//                                             kSecAttrAccount as String: account,
                                              kSecValueData as String: data,
                                              kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly]
         
         let refreshStatus = SecItemAdd(addRefreshQuery as CFDictionary, nil)
         guard refreshStatus == errSecSuccess else {
-            let message = SecCopyErrorMessageString(refreshStatus, nil)
-            print("refresh status = \(message!)")
+            if let message = SecCopyErrorMessageString(refreshStatus, nil) {
+                print("refresh store status = \(message)")
+            }
             return
         }
         
@@ -60,50 +68,68 @@ final class TokenClient {
         storeRefreshToken(with: onboardingModel, refreshToken: tokens.refreshToken)
     }
     
-    func loadRefreshToken(with onboardingModel: OnboardingModel) {
+    func loadRefreshToken(with onboardingModel: OnboardingModel) -> TokenStringDTO? {
         let service = "com.sonder.keys.refresh"
         let getQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                       kSecAttrService as String: service]
+                                       kSecAttrService as String: service,
+                                       kSecReturnData as String: true]
         var item: CFTypeRef?
         let status = SecItemCopyMatching(getQuery as CFDictionary, &item)
         guard status == errSecSuccess else {
-            let message = SecCopyErrorMessageString(status, nil)
-            print("refresh load status = \(message!)")
-            return
+            if let message = SecCopyErrorMessageString(status, nil) {
+                print("refresh load status = \(message)")
+            }
+            return nil
         }
-        print("refresh item = \(item!)")
         
-        let data = item as? Data
-        if let data {
-            let str = String(data: data, encoding: .utf8)
-            print("refresh key = \(str!)")
+        guard let data = item as? Data else {
+            print("refresh load data is nil")
+            return nil
         }
+        guard let token = String(data: data, encoding: .utf8) else {
+            print("refresh load key is nil")
+            return nil
+        }
+        print("refresh load key = \(token)")
+        return TokenStringDTO(token)
+        
+
     }
     
-    func loadAccessToken(with onboardingModel: OnboardingModel) {
+    func loadAccessToken(with onboardingModel: OnboardingModel) -> TokenStringDTO?? {
         let service = "com.sonder.keys.access"
         let getQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                       kSecAttrService as String: service]
+                                       kSecAttrService as String: service,
+                                       kSecReturnData as String: true]
         var item: CFTypeRef?
         let status = SecItemCopyMatching(getQuery as CFDictionary, &item)
         guard status == errSecSuccess else {
-            let message = SecCopyErrorMessageString(status, nil)
-            print("access load status = \(message!)")
-            return
+            if let message = SecCopyErrorMessageString(status, nil) {
+                print("access load status = \(message)")
+            }
+            return nil
         }
-        print("access item = \(item!)")
-
-        let data = item as? Data
-        if let data {
-            let str = String(data: data, encoding: .utf8)
-            print("access key = \(str!)")
+        if let item {
+            print("access load item = \(item)")
+        } else {
+            print("access load item is nil")
         }
+        guard let data = item as? Data else {
+            print("access load data is nil")
+            return nil
+        }
+        guard let token = String(data: data, encoding: .utf8) else {
+            print("access load key is nil")
+            return nil
+        }
+        print("access load key = \(token)")
+        return TokenStringDTO(token)
     }
     
-    func loadTokens(with onboardingModel: OnboardingModel) {
-        loadAccessToken(with: onboardingModel)
-        loadRefreshToken(with: onboardingModel)
-        
+    func loadTokens(with onboardingModel: OnboardingModel) -> (TokenStringDTO?, TokenStringDTO?) {
+        let accessToken = loadAccessToken(with: onboardingModel)
+        let refreshToken = loadRefreshToken(with: onboardingModel)
+        return (accessToken ?? nil, refreshToken ?? nil)
     }
     
     func clearRefreshTokens(with onboardingModel: OnboardingModel) {
