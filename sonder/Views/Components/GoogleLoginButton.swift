@@ -40,9 +40,9 @@ extension GIDGoogleUser {
     func toDTO() -> UserDTO {
         guard let profile = self.profile else {
             // handle if no profile is included.... shouldnt be the case
-            return UserDTO(email: "", firstName: "", lastName: "")
+            return UserDTO(email: "", firstName: "", lastName: "", isOnboarded: false)
         }
-        let dto = UserDTO(email: profile.email, firstName: profile.givenName ?? "", lastName: profile.familyName ?? "")
+        let dto = UserDTO(email: profile.email, firstName: profile.givenName ?? "", lastName: profile.familyName ?? "", isOnboarded: false)
         return dto
         
     }

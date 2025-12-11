@@ -75,7 +75,7 @@ final class OnboardingClient {
                 
                 print("from task: accessToken = \(accessToken!)")
                 
-                guard let user = try await apiClient.fetchUser(accessToken!) else {
+                guard let user = try await apiClient.fetchUser(accessToken: accessToken!) else {
                     print("user info is nil in taks, implement solution to receive data accurately from server")
                     return
                 }
