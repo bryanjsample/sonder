@@ -445,15 +445,229 @@ final class DefaultAPIClient: APIClient {
         return true
     }
 
-//    func fetchCirclePosts(_ circleID: UUID) async throws -> [PostDTO] // /circles/:circleID/posts get
-//    func createCirclePost(_ circleID: UUID, post: PostDTO) async throws -> PostDTO // /circles/:circleID/posts post
-//    func fetchCirclePost(circleID: UUID, postID: UUID) async throws -> PostDTO // /circles/:circleID/posts/:postID get
-//    func editCirclePost(circleID: UUID, postID: UUID, post: PostDTO) async throws -> PostDTO // /circles/:circleID/posts/:postID patch
-//    func deleteCirclePost(circleID: UUID, postID: UUID) async throws // /circles/:circleID/posts/:postID delete
-//    
-//    func fetchPostComments(circleID: UUID, postID: UUID) async throws -> [CommentDTO] // /circles/:circleID/posts/:postID/comments get
-//    func createPostComment(circleID: UUID, postID: UUID, comment: CommentDTO) async throws -> CommentDTO // /circles/:circleID/posts/:postID/comments post
-//    func fetchPostComment(circleID: UUID, postID: UUID, commentID: UUID) async throws -> CommentDTO // /circles/:circleID/posts/:postID/comments/:commentID get
-//    func editPostComment(circleID: UUID, postID: UUID, commentID: UUID, comment: CommentDTO) async throws -> CommentDTO // /circles/:circleID/posts/:postID/comments/:commentID patch
-//    func deletePostComment(circleID: UUID, postID: UUID, commentID: UUID) async throws // /circles/:circleID/posts/:postID/comments/:commentID delete
+    // /circles/:circleID/posts GET
+    func fetchCirclePosts(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> [PostDTO]? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts") else {
+            print("url is nil in fetchCirclePosts")
+            return nil
+        }
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .get, accessToken: accessToken.token)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse fetchCirclePosts = \(httpResponse)")
+        print("fetchCirclePosts status = \(httpResponse.statusCode)")
+        
+        let posts = try JSONDecoder().decode([PostDTO].self, from: data)
+        print("GET SUCCESS circle posts = \(posts)")
+        return posts
+    }
+
+    // /circles/:circleID/posts POST
+    func createCirclePost(_ circleID: UUID, post: PostDTO, accessToken: TokenStringDTO) async throws -> PostDTO? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts") else {
+            print("url is nil in createCirclePost")
+            return nil
+        }
+        
+        let content = try JSONEncoder().encode(post)
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONcontent: content)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse createCirclePost = \(httpResponse)")
+        print("createCirclePost status = \(httpResponse.statusCode)")
+        
+        let post = try JSONDecoder().decode(PostDTO.self, from: data)
+        print("POST SUCCESS circle post = \(post)")
+        return post
+    }
+    
+    // /circles/:circleID/posts/:postID GET
+    func fetchCirclePost(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws -> PostDTO? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/post/\(postID.uuidString)") else {
+            print("url is nil in fetchCirclePost")
+            return nil
+        }
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .get, accessToken: accessToken.token)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse fetchCirclePost = \(httpResponse)")
+        print("fetchCirclePost status = \(httpResponse.statusCode)")
+        
+        let post = try JSONDecoder().decode(PostDTO.self, from: data)
+        print("GET SUCCESS circle post = \(post)")
+        return post
+    }
+    
+    // /circles/:circleID/posts/:postID PATCH
+    func editCirclePost(circleID: UUID, postID: UUID, post: PostDTO, accessToken: TokenStringDTO) async throws -> PostDTO? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/post/\(postID.uuidString)") else {
+            print("url is nil in editCirclePost")
+            return nil
+        }
+        
+        let content = try JSONEncoder().encode(post)
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .patch, accessToken: accessToken.token, bodyJSONcontent: content)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse editCirclePost = \(httpResponse)")
+        print("editCirclePost status = \(httpResponse.statusCode)")
+        
+        let post = try JSONDecoder().decode(PostDTO.self, from: data)
+        print("PATCH SUCCESS circle post = \(post)")
+        return post
+    }
+    
+    // /circles/:circleID/posts/:postID delete
+    func deleteCirclePost(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws -> Bool {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts/\(postID.uuidString)") else {
+            print("url is nil in deleteCirclePost")
+            return false
+        }
+        
+        let (_, response) = try await self.makeRequest(to: url, httpMethod: .delete, accessToken: accessToken.token)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return false
+        }
+        
+        print("httpResponse deleteCirclePost = \(httpResponse)")
+        print("deleteCirclePost status = \(httpResponse.statusCode)")
+        
+        print("DELETE SUCCESS for circle post")
+        return true
+    }
+
+    // /circles/:circleID/posts/:postID/comments GET
+    func fetchPostComments(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws -> [CommentDTO]? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts/\(postID.uuidString)/comments") else {
+            print("url is nil in fetchPostComments")
+            return nil
+        }
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .get, accessToken: accessToken.token)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse fetchPostComments = \(httpResponse)")
+        print("fetchPostComments status = \(httpResponse.statusCode)")
+        
+        let comments = try JSONDecoder().decode([CommentDTO].self, from: data)
+        print("GET SUCCESS post comments = \(comments)")
+        return comments
+    }
+    
+    // /circles/:circleID/posts/:postID/comments POST
+    func createPostComment(circleID: UUID, postID: UUID, comment: CommentDTO, accessToken: TokenStringDTO) async throws -> CommentDTO? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts/\(postID.uuidString)/comments") else {
+            print("url is nil in createPostComment")
+            return nil
+        }
+        
+        let content = try JSONEncoder().encode(comment)
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONcontent: content)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse createPostComment = \(httpResponse)")
+        print("createPostComment status = \(httpResponse.statusCode)")
+        
+        let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
+        print("POST SUCCESS post comment = \(comment)")
+        return comment
+    }
+    
+    // /circles/:circleID/posts/:postID/comments/:commentID GET
+    func fetchPostComment(circleID: UUID, postID: UUID, commentID: UUID, accessToken: TokenStringDTO) async throws -> CommentDTO? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts/\(postID.uuidString)/comments/\(commentID.uuidString)") else {
+            print("url is nil in fetchPostComment")
+            return nil
+        }
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .get, accessToken: accessToken.token)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse fetchPostComment = \(httpResponse)")
+        print("fetchPostComment status = \(httpResponse.statusCode)")
+        
+        let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
+        print("GET SUCCESS post comment = \(comment)")
+        return comment
+    }
+    
+    // /circles/:circleID/posts/:postID/comments/:commentID PATCH
+    func editPostComment(circleID: UUID, postID: UUID, commentID: UUID, comment: CommentDTO, accessToken: TokenStringDTO) async throws -> CommentDTO? {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts/\(postID.uuidString)/comments/\(commentID.uuidString)") else {
+            print("url is nil in editPostComment")
+            return nil
+        }
+        
+        let content = try JSONEncoder().encode(comment)
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .patch, accessToken: accessToken.token, bodyJSONcontent: content)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse editPostComment = \(httpResponse)")
+        print("editPostComment status = \(httpResponse.statusCode)")
+        
+        let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
+        print("PATCH SUCCESS post comment = \(comment)")
+        return comment
+    }
+    
+    // /circles/:circleID/posts/:postID/comments/:commentID delete
+    func deletePostComment(circleID: UUID, postID: UUID, commentID: UUID, accessToken: TokenStringDTO) async throws -> Bool {
+        guard let url = self.getURL("/circles/\(circleID.uuidString)/posts/\(postID.uuidString)/comments/\(commentID.uuidString)") else {
+            print("url is nil in deletePostComment")
+            return false
+        }
+        
+        let (_, response) = try await self.makeRequest(to: url, httpMethod: .delete, accessToken: accessToken.token)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return false
+        }
+        
+        print("httpResponse editPostComment = \(httpResponse)")
+        print("editPostComment status = \(httpResponse.statusCode)")
+        
+        print("DELETE SUCCESS on post comment")
+        return true
+    }
 }
