@@ -58,6 +58,8 @@ final class OnboardingClient {
             let tokenClient = TokenClient()
             
             Task {
+                await onboardingModel.loading()
+                
                 guard let tokens = try await apiClient.authenticateViaGoogle(token) else {
                     await onboardingModel.unauthenticated()
                     print("tokens returned nil in completeGoogleOAuth")

@@ -13,10 +13,16 @@ struct CircleInviteCodeView: View {
     @State private var circleInviteCode: String = ""
     
     var body: some View {
-        SonderTitleText.titleBlock
-        Spacer(minLength: 138.0)
-        inviteCodeForm
-        submitButton
+        ZStack {
+            BackgroundColor()
+                .ignoresSafeArea(.all)
+            VStack {
+                SonderTitleText.titleBlock
+                Spacer(minLength: 138.0)
+                inviteCodeForm
+                submitButton
+            }.ignoresSafeArea(.keyboard)
+        }
     }
 }
 
@@ -27,7 +33,7 @@ extension CircleInviteCodeView {
                 TextField("Invite Code", text: $circleInviteCode)
             }
         }
-        .scrollDisabled(true)
+        .scrollDismissesKeyboard(.immediately)
         .scrollContentBackground(.hidden)
     }
     
@@ -42,6 +48,7 @@ extension CircleInviteCodeView {
         .buttonStyle(.glassProminent)
         .padding(Constants.padding)
         .fontWeight(.bold)
+        .ignoresSafeArea(.keyboard)
     }
 }
 

@@ -15,10 +15,16 @@ struct CreateCircleView: View {
     @FocusState private var isFocused: Bool
     
     var body: some View {
-        SonderTitleText.titleBlock
-        ProfilePicturePicker(defaultSystemImage: "figure.socialdance.circle.fill")
-        circleForm
-        submitButton
+        ZStack {
+            BackgroundColor()
+                .ignoresSafeArea(.all)
+            VStack {
+                SonderTitleText.titleBlock
+                ProfilePicturePicker(defaultSystemImage: "figure.socialdance.circle.fill")
+                circleForm
+                submitButton
+            }.ignoresSafeArea(.keyboard)
+        }
     }
 }
 
@@ -27,10 +33,11 @@ extension CreateCircleView {
         Form {
             Section("Circle Information") {
                 TextField("Circle Name", text: $name)
+                    .font(.title2)
                 descriptionInput
             }
         }
-        .scrollDisabled(true)
+        .scrollDismissesKeyboard(.immediately)
         .scrollContentBackground(.hidden)
     }
     
@@ -40,10 +47,12 @@ extension CreateCircleView {
                 Text("Circle Description...")
                     .allowsHitTesting(false)
                     .opacity(0.30)
+                    .font(.body)
             }
             
             TextEditor(text: $description)
                 .focused($isFocused)
+                .font(.body)
         }
     }
     
@@ -58,6 +67,7 @@ extension CreateCircleView {
         .buttonStyle(.glassProminent)
         .padding(Constants.padding)
         .fontWeight(.bold)
+        .ignoresSafeArea(.keyboard)
     }
 }
 

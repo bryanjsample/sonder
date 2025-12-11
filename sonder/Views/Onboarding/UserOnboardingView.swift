@@ -18,22 +18,15 @@ struct UserOnboardingView: View {
     
     var body: some View {
         ZStack {
-            
             BackgroundColor()
                 .ignoresSafeArea(.all)
-            
             VStack {
                 Spacer()
                 SonderTitleText.titleBlock
                 ProfilePicturePicker(defaultSystemImage: "person.circle.fill")
-                onboardingForm.onAppear {
-                    firstName = onboardingModel.user?.firstName ?? ""
-                    lastName = onboardingModel.user?.lastName ?? ""
-                    email = onboardingModel.user?.email ?? ""
-                    username = onboardingModel.user?.username ?? ""
-                }
+                onboardingForm
                 submitButton
-            }
+            }.ignoresSafeArea(.keyboard)
         }
     }
 }
@@ -47,12 +40,18 @@ extension UserOnboardingView {
                 TextField("Email", text: $email)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
+                    .keyboardType(.emailAddress)
                 TextField("Username", text: $username)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
             }
+        }.onAppear {
+            firstName = onboardingModel.user?.firstName ?? ""
+            lastName = onboardingModel.user?.lastName ?? ""
+            email = onboardingModel.user?.email ?? ""
+            username = onboardingModel.user?.username ?? ""
         }
-        .scrollDisabled(true)
+        .scrollDismissesKeyboard(.immediately)
         .scrollContentBackground(.hidden)
     }
     
