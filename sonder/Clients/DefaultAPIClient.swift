@@ -9,14 +9,41 @@ import SonderDTOs
 import Foundation
 import GoogleSignIn
 
-final class DefaultAPIClient {
+final class DefaultAPIClient: APIClient {
+    private let serverBaseURL = ProcessInfo.processInfo.environment["SERVER_BASE_URL"]
     
-    private let SERVER_BASE_URL = ProcessInfo.processInfo.environment["SERVER_BASE_URL"]
+    // serverbaseurl/auth/ios POST
+    func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO? {
+        guard let serverBaseURL else {
+            print("Server base URL is not defined")
+            return nil
+        }
+        let urlString = serverBaseURL + "/auth/ios"
+        print("request url = \(urlString)")
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(googleProfileAPIKey)", forHTTPHeaderField: "Authorization")
+        
+        print(request.allHTTPHeaderFields)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 {
+            print("httpResponse = \(httpResponse)")
+            print("status = \(httpResponse.statusCode)")
+        }
+        
+        let tokens = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
+        print("POST SUCCESS: tokens = \(tokens)")
+        return tokens
+    }
     
-//    func signInWithGoogle(_ user: UserDTO) async throws -> TokenResponseDTO { // /auth/google/success get change to POST
-//        return TokenResponseDTO(accessToken: AccessTokenDTO(token: "TOKEN", ownerID: UUID(), expiresAt: Date.now, revoked: false), refreshToken: RefreshTokenDTO(token: "TOKEN", ownerID: UUID(), expiresAt: Date.now, revoked: false))
-//    }
-//    
 //    func requestNewToken() async throws -> TokenResponseDTO // /auth/refresh get
 //    
 //    func fetchUser() async throws -> UserDTO // /me get

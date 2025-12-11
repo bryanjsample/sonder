@@ -11,7 +11,7 @@ import GoogleSignInSwift
 import SonderDTOs
 
 struct GoogleLoginButton: View {
-    @Bindable var authVM: AuthViewModel
+    @Bindable var onboardingModel: OnboardingModel
     
     var body: some View {
         googleButton
@@ -20,13 +20,14 @@ struct GoogleLoginButton: View {
 
 extension GoogleLoginButton {
     func handlePress() {
+        let onboardingClient = OnboardingClient()
         // Find a presenting view controller from the key window
         guard let presentingVC = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {
             print("No presenting VC")
             return
         }
         
-        authVM.completeGoogleOAuth(presentingVC: presentingVC)
+        onboardingClient.completeGoogleOAuth(with: onboardingModel, presentingVC: presentingVC)
     }
 
     var googleButton: some View {

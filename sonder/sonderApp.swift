@@ -12,34 +12,35 @@ import SonderDTOs
 @main
 struct sonderApp: App {
 
-    @State private var authVM = AuthViewModel()
+    @State private var onboardingModel = OnboardingModel()
     
     var body: some Scene {
         WindowGroup {
-            RootView(authVM: authVM)
+            RootView(onboardingModel: onboardingModel)
                 .onAppear {
-                    authVM.startup()
+                    let onboardingClient = OnboardingClient()
+                    onboardingClient.startup()
                 }
         }
     }
 }
 
 private struct RootView: View {
-    @Bindable var authVM: AuthViewModel
+    @Bindable var onboardingModel: OnboardingModel
 
     var body: some View {
         Group {
-            switch authVM.status {
+            switch onboardingModel.status {
             case .loading:
                 SplashView()
             case .authenticatedInCircle:
                 LandingPageView()
             case .notOnboarded:
-                UserOnboardingView(authVM: authVM)
+                UserOnboardingView(onboardingModel: onboardingModel)
             case .authenticatedNotInCircle:
-                CircleOnboardingView(authVM: authVM)
+                CircleOnboardingView(onboardingModel: onboardingModel)
             case .unauthenticated:
-                LoginView(authVM: authVM)
+                LoginView(onboardingModel: onboardingModel)
                     .onOpenURL { url in
                         GIDSignIn.sharedInstance.handle(url)
                     }
@@ -48,7 +49,7 @@ private struct RootView: View {
                     Text("Error").font(.headline)
                     Text(message).font(.subheadline)
                     Button("Retry") {
-                        authVM.startup()
+                        onboardingModel.status = .unauthenticated
                     }
                 }
                 .padding(Constants.padding)

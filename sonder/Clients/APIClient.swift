@@ -9,9 +9,9 @@ import SonderDTOs
 import Foundation
 
 protocol APIClient {
-    static func signInWithGoogle(_ user: UserDTO) async throws -> TokenResponseDTO // /auth/google/success get                  CHANGE TO POST
+    func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO? // /auth/ios POST
 //    func requestNewToken() async throws -> TokenResponseDTO // /auth/refresh get
-//    
+//
 //    func fetchUser() async throws -> UserDTO // /me get
 //    func editUser(_ user: UserDTO) async throws -> UserDTO // /me patch
 //    func removeUser() async throws // /me delete

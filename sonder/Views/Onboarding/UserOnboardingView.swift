@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserOnboardingView: View {
     
-    @Bindable var authVM: AuthViewModel
+    @Bindable var onboardingModel: OnboardingModel
     @State var firstName: String = ""
     @State var lastName: String = ""
     @State var email: String = ""
@@ -52,7 +52,7 @@ extension UserOnboardingView {
     
     var submitButton: some View {
         Button() {
-            authVM.createUser()
+            onboardingModel.authenticatedNotInCircle()
         } label: {
             Text("Create User")
                 .frame(maxWidth: .infinity)
@@ -65,5 +65,5 @@ extension UserOnboardingView {
 }
 
 #Preview {
-    UserOnboardingView(authVM: AuthViewModel())
+    UserOnboardingView(onboardingModel: OnboardingModel())
 }

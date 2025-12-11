@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct LoginView: View {
-    @Bindable var authVM: AuthViewModel
+    @Bindable var onboardingModel: OnboardingModel
     
     var body: some View {
         VStack {
             Spacer()
             SonderTitleText.titleBlock
             Spacer()
-            GoogleLoginButton(authVM: authVM)
+            GoogleLoginButton(onboardingModel: onboardingModel)
             Spacer()
             Spacer()
         }
@@ -24,5 +24,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(authVM: AuthViewModel())
+    LoginView(onboardingModel: OnboardingModel())
 }
