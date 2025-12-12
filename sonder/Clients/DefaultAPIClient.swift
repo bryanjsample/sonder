@@ -61,6 +61,41 @@ final class DefaultAPIClient: APIClient {
         return try await URLSession.shared.data(for: request)
     }
     
+    private func parseHTTPStatusCode(_ response: HTTPURLResponse) throws {
+        let successfulStatusCodes = [200, 201, 202]
+        
+        guard successfulStatusCodes.contains(response.statusCode) else {
+            switch response.statusCode {
+            case 400:
+                throw APIError.badRequest
+            case 401:
+                throw APIError.unauthorized
+            case 403:
+                throw APIError.forbidden
+            case 404:
+                throw APIError.notFound
+            case 405:
+                throw APIError.methodNotAllowed
+            case 406:
+                throw APIError.notAcceptable
+            case 408:
+                throw APIError.requestTimeout
+            case 409:
+                throw APIError.conflict
+            case 500:
+                throw APIError.interalServerError
+            case 501:
+                throw APIError.notImplemented
+            case 502:
+                throw APIError.badGateway
+            case 503:
+                throw APIError.serviceUnavailable
+            default:
+                throw APIError.unexpectedErrorFromServer
+            }
+        }
+    }
+    
     // serverbaseurl/auth/ios POST
     func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO? {
         guard let url = self.getURL("/auth/ios") else {
@@ -77,6 +112,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse auth google = \(httpResponse)")
         print("auth google status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let tokens = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
         print("POST SUCCESS: tokens = \(tokens)")
@@ -102,6 +139,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse requestNewAccessToken = \(httpResponse)")
         print("requestNewAccessToken status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let tokens = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
         print("POST SUCCESS: tokens = \(tokens)")
         return tokens
@@ -123,6 +162,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetch user = \(httpResponse)")
         print("fetchUser status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let user = try JSONDecoder().decode(UserDTO.self, from: data)
         print("GET SUCCESS: user = \(user)")
@@ -148,6 +189,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse edit user = \(httpResponse)")
         print("edit User status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let user = try JSONDecoder().decode(UserDTO.self, from: data)
         print("PATCH SUCCESS: user = \(user)")
         return user
@@ -169,6 +212,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse delete user = \(httpResponse)")
         print("delete User status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         print("DELETE SUCCESS for user")
         return true
@@ -193,6 +238,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse onboardNewUser = \(httpResponse)")
         print("onboardNewUser status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let user = try JSONDecoder().decode(UserDTO.self, from: data)
         print("POST SUCCESS user = \(user)")
         return user
@@ -215,6 +262,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchUserEvents = \(httpResponse)")
         print("fetchUserEvents status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let events = try JSONDecoder().decode(([CalendarEventDTO].self), from: data)
         print("GET SUCCESS events = \(events)")
         return events
@@ -236,6 +285,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchUserPosts = \(httpResponse)")
         print("fetchUserPosts status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let posts = try JSONDecoder().decode([PostDTO].self, from: data)
         print("GET SUCCESS posts = \(posts)")
@@ -261,6 +312,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createCircle = \(httpResponse)")
         print("createCircle status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("POST SUCCESS circle = \(circle)")
         return circle
@@ -285,6 +338,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse joinCircleViaInvitation = \(httpResponse)")
         print("joinCircleViaInvitation status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("POST SUCCESS circle = \(circle)")
         return circle
@@ -306,6 +361,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchCircle = \(httpResponse)")
         print("fetchCircle status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("GET SUCCES circle = \(circle)")
@@ -331,6 +388,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCircle = \(httpResponse)")
         print("editCircle status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("PATCH SUCCESS circle = \(circle)")
         return circle
@@ -353,6 +412,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse delete circle = \(httpResponse)")
         print("delete circle status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         print("DELETE SUCCESS for circle")
         return true
     }
@@ -373,6 +434,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchCircleUsers = \(httpResponse)")
         print("fetchCircleUsers status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let users = try JSONDecoder().decode([UserDTO].self, from: data)
         print("GET SUCCESS circle users = \(users)")
@@ -396,6 +459,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCircleFeed = \(httpResponse)")
         print("fetchCircleFeed status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let feed = try JSONDecoder().decode(FeedResponseDTO.self, from: data)
         print("GET SUCCESS feed = \(feed)")
         return feed
@@ -417,6 +482,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchCircleEvents = \(httpResponse)")
         print("fetchCircleEvents status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let events = try JSONDecoder().decode([CalendarEventDTO].self, from: data)
         print("GET SUCCESS circle events = \(events)")
@@ -442,6 +509,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createCircleEvent = \(httpResponse)")
         print("createCircleEvent status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let event = try JSONDecoder().decode(CalendarEventDTO.self, from: data)
         print("POST SUCCESS event = \(event)")
         return event
@@ -463,6 +532,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchCircleEvent = \(httpResponse)")
         print("fetchCircleEvent status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let event = try JSONDecoder().decode(CalendarEventDTO.self, from: data)
         print("GET SUCCESS event = \(event)")
@@ -488,6 +559,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCircleEvent = \(httpResponse)")
         print("editCircleEvent status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let event = try JSONDecoder().decode(CalendarEventDTO.self, from: data)
         print("PATCH SUCCESS event = \(event)")
         return event
@@ -510,6 +583,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCircleEvent = \(httpResponse)")
         print("editCircleEvent status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         print("DELETE SUCCESS for circle event")
         return true
     }
@@ -530,6 +605,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchCirclePosts = \(httpResponse)")
         print("fetchCirclePosts status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let posts = try JSONDecoder().decode([PostDTO].self, from: data)
         print("GET SUCCESS circle posts = \(posts)")
@@ -555,6 +632,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createCirclePost = \(httpResponse)")
         print("createCirclePost status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let post = try JSONDecoder().decode(PostDTO.self, from: data)
         print("POST SUCCESS circle post = \(post)")
         return post
@@ -576,6 +655,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchCirclePost = \(httpResponse)")
         print("fetchCirclePost status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let post = try JSONDecoder().decode(PostDTO.self, from: data)
         print("GET SUCCESS circle post = \(post)")
@@ -601,6 +682,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCirclePost = \(httpResponse)")
         print("editCirclePost status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+
         let post = try JSONDecoder().decode(PostDTO.self, from: data)
         print("PATCH SUCCESS circle post = \(post)")
         return post
@@ -623,6 +706,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse deleteCirclePost = \(httpResponse)")
         print("deleteCirclePost status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         print("DELETE SUCCESS for circle post")
         return true
     }
@@ -643,6 +728,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchPostComments = \(httpResponse)")
         print("fetchPostComments status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let comments = try JSONDecoder().decode([CommentDTO].self, from: data)
         print("GET SUCCESS post comments = \(comments)")
@@ -668,6 +755,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createPostComment = \(httpResponse)")
         print("createPostComment status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
         print("POST SUCCESS post comment = \(comment)")
         return comment
@@ -689,6 +778,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse fetchPostComment = \(httpResponse)")
         print("fetchPostComment status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
         print("GET SUCCESS post comment = \(comment)")
@@ -714,6 +805,8 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editPostComment = \(httpResponse)")
         print("editPostComment status = \(httpResponse.statusCode)")
         
+        try parseHTTPStatusCode(httpResponse)
+        
         let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
         print("PATCH SUCCESS post comment = \(comment)")
         return comment
@@ -735,6 +828,8 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse editPostComment = \(httpResponse)")
         print("editPostComment status = \(httpResponse.statusCode)")
+        
+        try parseHTTPStatusCode(httpResponse)
         
         print("DELETE SUCCESS on post comment")
         return true
