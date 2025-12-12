@@ -67,16 +67,13 @@ final class OnboardingClient {
                     return
                 }
 
-                await tokenClient.storeTokens(tokens: tokens)
+                try await tokenClient.storeTokens(tokens: tokens)
                 
-                guard let accessToken = await tokenClient.loadAccessToken() else {
-                    print("accessToken is nil in task, implement solution to reassign token and store properly")
-                    return
-                }
+                let accessToken = try await tokenClient.loadToken(as: .access)
                 
-                print("from task: accessToken = \(accessToken!)")
+                print("from task: accessToken = \(accessToken)")
                 
-                guard let user = try await self.apiClient.fetchUser(accessToken: accessToken!) else {
+                guard let user = try await self.apiClient.fetchUser(accessToken: accessToken) else {
                     print("user info is nil in taks, implement solution to receive data accurately from server")
                     return
                 }
@@ -132,14 +129,11 @@ final class OnboardingClient {
         
         let tokenClient = TokenClient()
         
-        guard let accessToken = tokenClient.loadAccessToken() else {
-            print("accessToken not loaded in onboard new user")
-            return
-        }
+        let accessToken = try tokenClient.loadToken(as: .access)
         
         print("access token loaded")
         
-        guard let user = try await apiClient.onboardNewUser(user, accessToken: accessToken!) else {
+        guard let user = try await apiClient.onboardNewUser(user, accessToken: accessToken) else {
             print("user not loaded in onboardNewUsr")
             return
         }
@@ -149,12 +143,11 @@ final class OnboardingClient {
         } else {
             onboardingModel.status = .authenticatedInCircle
         }
-        
     }
     
-    func signOut(with onboardingModel: OnboardingModel) {
+    func signOut(with onboardingModel: OnboardingModel) throws {
         let tokenClient = TokenClient()
-        tokenClient.clearTokens()
+        try tokenClient.clearTokens()
         GIDSignIn.sharedInstance.signOut()
         onboardingModel.unauthenticated()
     }
