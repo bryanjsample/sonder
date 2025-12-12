@@ -11,10 +11,8 @@ import Foundation
 protocol APIClient {
     // /auth/ios POST
     func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO?
-    // /auth/refresh get
-//    func requestNewToken() async throws -> TokenResponseDTO
-    // /auth/onboard POST
-//    func onboardNewUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO?
+    // /auth/refresh POST (USE WHEN ACCESS TOKEN IS EXPIRED)
+    func requestNewAccessToken(refreshToken: TokenStringDTO) async throws -> TokenResponseDTO?
     
     // /me GET
     func fetchUser(accessToken: TokenStringDTO) async throws -> UserDTO?
@@ -22,6 +20,8 @@ protocol APIClient {
     func editUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO?
     // /me DELETE
     func deleteUser(accessToken: TokenStringDTO) async throws -> Bool
+    // /me/onboard POST
+    func onboardNewUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO?
     // /me/events GET
     func fetchUserEvents(accessToken: TokenStringDTO) async throws -> [CalendarEventDTO]?
     // /me/posts GET
@@ -29,6 +29,8 @@ protocol APIClient {
 
     // /circles POST
     func createCircle(_ circle: CircleDTO, accessToken: TokenStringDTO) async throws -> CircleDTO?
+    // /circles/invitation POST
+    func joinCircleViaInvitation(_ invitationCode: InvitationStringDTO, accessToken: TokenStringDTO) async throws -> CircleDTO?
     // /circles/:circleID GET
     func fetchCircle(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> CircleDTO?
     // /circles/:circleID PATCH

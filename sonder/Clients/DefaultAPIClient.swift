@@ -44,12 +44,12 @@ final class DefaultAPIClient: APIClient {
         return url
     }
     
-    private func makeRequest(to url: URL, httpMethod: HttpMethod, accessToken: String?, bodyJSONcontent: Data? = nil, contentType: String = "application/JSON") async throws -> (Data, URLResponse) {
+    private func makeRequest(to url: URL, httpMethod: HttpMethod, accessToken: String? = nil, bodyJSONcontent: Data? = nil, contentType: String = "application/json; charset=utf-8") async throws -> (Data, URLResponse) {
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod.description
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
         if let content = bodyJSONcontent {
-            request.httpBody = try JSONEncoder().encode(content)
+            request.httpBody = content
         }
         if let token = accessToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -79,12 +79,33 @@ final class DefaultAPIClient: APIClient {
         print("auth google status = \(httpResponse.statusCode)")
         
         let tokens = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
-        print("PUT SUCCESS: tokens = \(tokens)")
+        print("POST SUCCESS: tokens = \(tokens)")
         return tokens
     }
     
-//    func requestNewToken() async throws -> TokenResponseDTO // /auth/refresh get
-//    func onboardNewUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO? // /auth/onboard POST
+    // /auth/refresh POST (USE WHEN ACCESS TOKEN IS EXPIRED)
+    func requestNewAccessToken(refreshToken: TokenStringDTO) async throws -> TokenResponseDTO? {
+        guard let url = self.getURL("/auth/refresh") else {
+            print("url is nil in requestNewAccessToken")
+            return nil
+        }
+        
+        let content = try JSONEncoder().encode(refreshToken)
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, bodyJSONcontent: content)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse requestNewAccessToken = \(httpResponse)")
+        print("requestNewAccessToken status = \(httpResponse.statusCode)")
+        
+        let tokens = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
+        print("POST SUCCESS: tokens = \(tokens)")
+        return tokens
+    }
     
     // /serverbaseurl/me GET
     func fetchUser(accessToken: TokenStringDTO) async throws -> UserDTO? {
@@ -153,6 +174,30 @@ final class DefaultAPIClient: APIClient {
         return true
     }
     
+    // /me/onboard POST
+    func onboardNewUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO? {
+        guard let url = self.getURL("/me/onboard") else {
+            print("url is nil in onboardNewUser")
+            return nil
+        }
+        
+        let content = try JSONEncoder().encode(user)
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONcontent: content)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse onboardNewUser = \(httpResponse)")
+        print("onboardNewUser status = \(httpResponse.statusCode)")
+        
+        let user = try JSONDecoder().decode(UserDTO.self, from: data)
+        print("POST SUCCESS user = \(user)")
+        return user
+    }
+    
     // /me/events get
     func fetchUserEvents(accessToken: TokenStringDTO) async throws -> [CalendarEventDTO]? {
         guard let url = self.getURL("/me/events") else {
@@ -215,6 +260,30 @@ final class DefaultAPIClient: APIClient {
         
         print("httpResponse createCircle = \(httpResponse)")
         print("createCircle status = \(httpResponse.statusCode)")
+        
+        let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
+        print("POST SUCCESS circle = \(circle)")
+        return circle
+    }
+    
+    // /circles/invitation POST
+    func joinCircleViaInvitation(_ invitationCode: InvitationStringDTO, accessToken: TokenStringDTO) async throws -> CircleDTO? {
+        guard let url = self.getURL("/circles/invitation") else {
+            print("url is nil in joinCircleViaInvitation")
+            return nil
+        }
+        
+        let content = try JSONEncoder().encode(invitationCode)
+        
+        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONcontent: content)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("httpResponse is nil")
+            return nil
+        }
+        
+        print("httpResponse joinCircleViaInvitation = \(httpResponse)")
+        print("joinCircleViaInvitation status = \(httpResponse.statusCode)")
         
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("POST SUCCESS circle = \(circle)")

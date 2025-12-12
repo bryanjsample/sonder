@@ -13,7 +13,7 @@ final class TokenClient {
     
     init () { }
     
-    func storeAccessToken(with onboardingModel: OnboardingModel, accessToken: AccessTokenDTO) {
+    func storeAccessToken(accessToken: AccessTokenDTO) {
         let service = "com.sonder.keys.access"
 //        let account = accessToken.ownerID.uuidString
         guard let data = accessToken.token.data(using: .utf8) else {
@@ -37,7 +37,7 @@ final class TokenClient {
         print("access key stored")
     }
     
-    func storeRefreshToken(with onboardingModel: OnboardingModel, refreshToken: RefreshTokenDTO) {
+    func storeRefreshToken(refreshToken: RefreshTokenDTO) {
         
         let service = "com.sonder.keys.refresh"
 //        let account = refreshToken.ownerID.uuidString
@@ -62,13 +62,13 @@ final class TokenClient {
         print("refresh key stored")
     }
     
-    func storeTokens(with onboardingModel: OnboardingModel, tokens: TokenResponseDTO) {
-        clearTokens(with: onboardingModel, storingNewTokens: true)
-        storeAccessToken(with: onboardingModel, accessToken: tokens.accessToken)
-        storeRefreshToken(with: onboardingModel, refreshToken: tokens.refreshToken)
+    func storeTokens(tokens: TokenResponseDTO) {
+        clearTokens()
+        storeAccessToken(accessToken: tokens.accessToken)
+        storeRefreshToken(refreshToken: tokens.refreshToken)
     }
     
-    func loadRefreshToken(with onboardingModel: OnboardingModel) -> TokenStringDTO? {
+    func loadRefreshToken() -> TokenStringDTO? {
         let service = "com.sonder.keys.refresh"
         let getQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                        kSecAttrService as String: service,
@@ -96,7 +96,7 @@ final class TokenClient {
 
     }
     
-    func loadAccessToken(with onboardingModel: OnboardingModel) -> TokenStringDTO?? {
+    func loadAccessToken() -> TokenStringDTO?? {
         let service = "com.sonder.keys.access"
         let getQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                        kSecAttrService as String: service,
@@ -126,13 +126,13 @@ final class TokenClient {
         return TokenStringDTO(token)
     }
     
-    func loadTokens(with onboardingModel: OnboardingModel) -> (TokenStringDTO?, TokenStringDTO?) {
-        let accessToken = loadAccessToken(with: onboardingModel)
-        let refreshToken = loadRefreshToken(with: onboardingModel)
+    func loadTokens() -> (TokenStringDTO?, TokenStringDTO?) {
+        let accessToken = loadAccessToken()
+        let refreshToken = loadRefreshToken()
         return (accessToken ?? nil, refreshToken ?? nil)
     }
     
-    func clearRefreshTokens(with onboardingModel: OnboardingModel) {
+    func clearRefreshTokens() {
         let service = "com.sonder.keys.refresh"
         let deleteQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                           kSecAttrService as String: service]
@@ -148,7 +148,7 @@ final class TokenClient {
         print("refresh key deleted")
     }
     
-    func clearAccessTokens(with onboardingModel: OnboardingModel) {
+    func clearAccessTokens() {
         let service = "com.sonder.keys.access"
         let deleteQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                           kSecAttrService as String: service]
@@ -165,11 +165,8 @@ final class TokenClient {
     }
     
     
-    func clearTokens(with onboardingModel: OnboardingModel, storingNewTokens: Bool = false) {
-        clearAccessTokens(with: onboardingModel)
-        clearRefreshTokens(with: onboardingModel)
-        if !storingNewTokens {
-            onboardingModel.unauthenticated()
-        }
+    func clearTokens() {
+        clearAccessTokens()
+        clearRefreshTokens()
     }
 }

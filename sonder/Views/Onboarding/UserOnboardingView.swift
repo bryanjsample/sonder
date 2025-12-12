@@ -57,7 +57,9 @@ extension UserOnboardingView {
     
     var submitButton: some View {
         Button() {
-            onboardingModel.authenticatedNotInCircle()
+            Task {
+                try await handlePress()
+            }
         } label: {
             Text("Create User")
                 .frame(maxWidth: .infinity)
@@ -66,6 +68,11 @@ extension UserOnboardingView {
         .buttonStyle(.glassProminent)
         .padding(Constants.padding)
         .fontWeight(.bold)
+    }
+    
+    func handlePress() async throws {
+        let onboardingClient = OnboardingClient()
+        try await onboardingClient.onboardNewUser(with: onboardingModel, firstName: firstName, lastName: lastName, email: email, username: username)
     }
 }
 

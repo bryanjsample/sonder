@@ -11,6 +11,8 @@ import GoogleSignIn
 
 final class OnboardingClient {
     
+    private let apiClient = DefaultAPIClient()
+    
     init() { }
     
     func startup() {
@@ -54,28 +56,27 @@ final class OnboardingClient {
             
             let token = result.user.accessToken.tokenString
             
-            let apiClient = DefaultAPIClient()
             let tokenClient = TokenClient()
             
             Task {
                 await onboardingModel.loading()
                 
-                guard let tokens = try await apiClient.authenticateViaGoogle(token) else {
+                guard let tokens = try await self.apiClient.authenticateViaGoogle(token) else {
                     await onboardingModel.unauthenticated()
                     print("tokens returned nil in completeGoogleOAuth")
                     return
                 }
 
-                await tokenClient.storeTokens(with: onboardingModel, tokens: tokens)
+                await tokenClient.storeTokens(tokens: tokens)
                 
-                guard let accessToken = await tokenClient.loadAccessToken(with: onboardingModel) else {
+                guard let accessToken = await tokenClient.loadAccessToken() else {
                     print("accessToken is nil in task, implement solution to reassign token and store properly")
-                    throw CancellationError()
+                    return
                 }
                 
                 print("from task: accessToken = \(accessToken!)")
                 
-                guard let user = try await apiClient.fetchUser(accessToken: accessToken!) else {
+                guard let user = try await self.apiClient.fetchUser(accessToken: accessToken!) else {
                     print("user info is nil in taks, implement solution to receive data accurately from server")
                     return
                 }
@@ -124,9 +125,36 @@ final class OnboardingClient {
         }
     }
     
+    func onboardNewUser(with onboardingModel: OnboardingModel, firstName: String, lastName: String, email: String, username: String) async throws {
+        onboardingModel.status = .loading
+        
+        let user = UserDTO(email: email, firstName: firstName, lastName: lastName, username: username)
+        
+        let tokenClient = TokenClient()
+        
+        guard let accessToken = tokenClient.loadAccessToken() else {
+            print("accessToken not loaded in onboard new user")
+            return
+        }
+        
+        print("access token loaded")
+        
+        guard let user = try await apiClient.onboardNewUser(user, accessToken: accessToken!) else {
+            print("user not loaded in onboardNewUsr")
+            return
+        }
+        
+        if user.circleID == nil {
+            onboardingModel.status = .authenticatedNotInCircle
+        } else {
+            onboardingModel.status = .authenticatedInCircle
+        }
+        
+    }
+    
     func signOut(with onboardingModel: OnboardingModel) {
         let tokenClient = TokenClient()
-        tokenClient.clearTokens(with: onboardingModel)
+        tokenClient.clearTokens()
         GIDSignIn.sharedInstance.signOut()
         onboardingModel.unauthenticated()
     }
