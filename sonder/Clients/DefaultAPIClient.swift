@@ -30,28 +30,48 @@ final class DefaultAPIClient: APIClient {
         }
     }
     
-    private func getURL(_ endpoint: String) -> URL? {
+    private func getURL(_ endpoint: String) throws -> URL {
         guard let serverBaseURL = ProcessInfo.processInfo.environment["SERVER_BASE_URL"] else {
             print("Server base URL is not defined")
-            return nil
+            throw APIError.undefinedServerBaseURL
         }
+        
         let urlString = serverBaseURL + endpoint
         print("request url = \(urlString)")
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
-            return nil
+            throw APIError.invalidURL
         }
         return url
     }
     
-    private func makeRequest(to url: URL, httpMethod: HttpMethod, accessToken: String? = nil, bodyJSONcontent: Data? = nil, contentType: String = "application/json; charset=utf-8") async throws -> (Data, URLResponse) {
-        var request = URLRequest(url: url)
-        request.httpMethod = httpMethod.description
-        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-        if let content = bodyJSONcontent {
+    private struct RequestModel {
+        let url: URL
+        let httpMethod: HttpMethod
+        let accessToken: String? = nil
+        let bodyJSONContent: Data? = nil
+        let contentType: String = "application/json; charset=utf-8"
+        
+        init(url: URL,
+             httpMethod: HttpMethod,
+             accessToken: String? = nil,
+             bodyJSONContent: Data? = nil,
+             contentType: String = "application/json; charset=utf-8") {
+            self.url = url
+            self.accessToken = accessToken
+            self.bodyJSONContent = bodyJSONContent
+            self.contentType = contentType
+        }
+    }
+    
+    private func makeRequest(_ model: RequestModel) async throws -> (Data, URLResponse) {
+        var request = URLRequest(url: model.url)
+        request.httpMethod = model.httpMethod.description
+        request.setValue(model.contentType, forHTTPHeaderField: "Content-Type")
+        if let content = model.bodyJSONContent {
             request.httpBody = content
         }
-        if let token = accessToken {
+        if let token = model.accessToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         if let headers = request.allHTTPHeaderFields {
@@ -61,185 +81,78 @@ final class DefaultAPIClient: APIClient {
         return try await URLSession.shared.data(for: request)
     }
     
-    private func parseHTTPStatusCode(_ response: HTTPURLResponse) throws {
-        let successfulStatusCodes = [200, 201, 202]
-        
-        guard successfulStatusCodes.contains(response.statusCode) else {
-            switch response.statusCode {
-            case 400:
-                throw APIError.badRequest
-            case 401:
-                throw APIError.unauthorized
-            case 403:
-                throw APIError.forbidden
-            case 404:
-                throw APIError.notFound
-            case 405:
-                throw APIError.methodNotAllowed
-            case 406:
-                throw APIError.notAcceptable
-            case 408:
-                throw APIError.requestTimeout
-            case 409:
-                throw APIError.conflict
-            case 500:
-                throw APIError.interalServerError
-            case 501:
-                throw APIError.notImplemented
-            case 502:
-                throw APIError.badGateway
-            case 503:
-                throw APIError.serviceUnavailable
-            default:
-                throw APIError.unexpectedErrorFromServer
-            }
-        }
-    }
-    
-    // serverbaseurl/auth/ios POST
-    func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO? {
-        guard let url = self.getURL("/auth/ios") else {
-            print("URL is nil in authenticateViaGoogle")
-            return nil
-        }
-        
-        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, accessToken: googleProfileAPIKey)
+    private func performAPIAction(_ model: RequestModel) async throws -> Data {
+        let (data, response) = try await self.makeRequest(model)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             print("httpResponse is nil")
-            return nil
+            throw APIError.invalidResponse
         }
         
-        print("httpResponse auth google = \(httpResponse)")
-        print("auth google status = \(httpResponse.statusCode)")
+        print("httpResponse = \(httpResponse)")
+        print("status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
+        return data
+    }
+    
+    // serverbaseurl/auth/ios POST
+    func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO {
+        let url = try self.getURL("/auth/ios")
+        let model = RequestModel(url: url, httpMethod: .post, accessToken: googleProfileAPIKey)
+        let data = try await performAPIAction(model)
         let tokens = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
         print("POST SUCCESS: tokens = \(tokens)")
         return tokens
     }
     
     // /auth/refresh POST (USE WHEN ACCESS TOKEN IS EXPIRED)
-    func requestNewAccessToken(refreshToken: TokenStringDTO) async throws -> TokenResponseDTO? {
-        guard let url = self.getURL("/auth/refresh") else {
-            print("url is nil in requestNewAccessToken")
-            return nil
-        }
-        
+    func requestNewAccessToken(refreshToken: TokenStringDTO) async throws -> TokenResponseDTO {
+        let url = try self.getURL("/auth/refresh")
         let content = try JSONEncoder().encode(refreshToken)
-        
-        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, bodyJSONcontent: content)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            print("httpResponse is nil")
-            return nil
-        }
-        
-        print("httpResponse requestNewAccessToken = \(httpResponse)")
-        print("requestNewAccessToken status = \(httpResponse.statusCode)")
-        
-        try parseHTTPStatusCode(httpResponse)
-        
+        let model = RequestModel(url: url, httpMethod: .post, bodyJSONContent: content)
+        let data = try await performAPIAction(model)
         let tokens = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
         print("POST SUCCESS: tokens = \(tokens)")
         return tokens
     }
     
     // /serverbaseurl/me GET
-    func fetchUser(accessToken: TokenStringDTO) async throws -> UserDTO? {
-        guard let url = self.getURL("/me") else {
-            print("url is nil in fetchUser")
-            return nil
-        }
-        
-        let (data, response) = try await self.makeRequest(to: url, httpMethod: .get, accessToken: accessToken.token)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            print("httpResponse is nil")
-            return nil
-        }
-        
-        print("httpResponse fetch user = \(httpResponse)")
-        print("fetchUser status = \(httpResponse.statusCode)")
-        
-        try parseHTTPStatusCode(httpResponse)
-        
+    func fetchUser(accessToken: TokenStringDTO) async throws -> UserDTO {
+        let url = try self.getURL("/me")
+        let model = RequestModel(url: url, httpMethod: .get, accessToken: accessToken.token)
+        let data = try await performAPIAction(model)
         let user = try JSONDecoder().decode(UserDTO.self, from: data)
         print("GET SUCCESS: user = \(user)")
         return user
     }
     
     // /me PATCH
-    func editUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO? {
-        guard let url = self.getURL("/me") else {
-            print("url is nil in editUser")
-            return nil
-        }
-        
+    func editUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO {
+        let url = try self.getURL("/me")
         let content = try JSONEncoder().encode(user)
-        
-        let (data, response) = try await self.makeRequest(to: url, httpMethod: .patch, accessToken: accessToken.token, bodyJSONcontent: content)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            print("httpResponse is nil")
-            return nil
-        }
-        
-        print("httpResponse edit user = \(httpResponse)")
-        print("edit User status = \(httpResponse.statusCode)")
-        
-        try parseHTTPStatusCode(httpResponse)
-        
+        let model = RequestModel(url: url, httpMethod: .patch, accessToken: accessToken.token, bodyJSONContent: content)
+        let data = try await performAPIAction(model)
         let user = try JSONDecoder().decode(UserDTO.self, from: data)
         print("PATCH SUCCESS: user = \(user)")
         return user
     }
     
     // /me DELETE
-    func deleteUser(accessToken: TokenStringDTO) async throws -> Bool {
-        guard let url = self.getURL("/me") else {
-            print("url is nil in removeUser ")
-            return false
-        }
-        
-        let (_, response) = try await self.makeRequest(to: url, httpMethod: .delete, accessToken: accessToken.token)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            print("httpResponse is nil")
-            return false
-        }
-        
-        print("httpResponse delete user = \(httpResponse)")
-        print("delete User status = \(httpResponse.statusCode)")
-        
-        try parseHTTPStatusCode(httpResponse)
-        
+    func deleteUser(accessToken: TokenStringDTO) async throws {
+        let url = try self.getURL("/me")
+        let model = RequestModel(url: url, httpMethod: .delete)
+        let _ = try await performAPIAction(model)
         print("DELETE SUCCESS for user")
-        return true
     }
     
     // /me/onboard POST
-    func onboardNewUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO? {
-        guard let url = self.getURL("/me/onboard") else {
-            print("url is nil in onboardNewUser")
-            return nil
-        }
-        
+    func onboardNewUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO {
+        let url = try self.getURL("/me/onboard")
         let content = try JSONEncoder().encode(user)
-        
-        let (data, response) = try await self.makeRequest(to: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONcontent: content)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            print("httpResponse is nil")
-            return nil
-        }
-        
-        print("httpResponse onboardNewUser = \(httpResponse)")
-        print("onboardNewUser status = \(httpResponse.statusCode)")
-        
-        try parseHTTPStatusCode(httpResponse)
-        
+        let model = RequestModel(url: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONContent: content)
+        let data = try await performAPIAction(model)
         let user = try JSONDecoder().decode(UserDTO.self, from: data)
         print("POST SUCCESS user = \(user)")
         return user
@@ -262,7 +175,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchUserEvents = \(httpResponse)")
         print("fetchUserEvents status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let events = try JSONDecoder().decode(([CalendarEventDTO].self), from: data)
         print("GET SUCCESS events = \(events)")
@@ -286,7 +199,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchUserPosts = \(httpResponse)")
         print("fetchUserPosts status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let posts = try JSONDecoder().decode([PostDTO].self, from: data)
         print("GET SUCCESS posts = \(posts)")
@@ -312,7 +225,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createCircle = \(httpResponse)")
         print("createCircle status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("POST SUCCESS circle = \(circle)")
@@ -338,7 +251,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse joinCircleViaInvitation = \(httpResponse)")
         print("joinCircleViaInvitation status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("POST SUCCESS circle = \(circle)")
@@ -362,7 +275,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCircle = \(httpResponse)")
         print("fetchCircle status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("GET SUCCES circle = \(circle)")
@@ -388,7 +301,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCircle = \(httpResponse)")
         print("editCircle status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let circle = try JSONDecoder().decode(CircleDTO.self, from: data)
         print("PATCH SUCCESS circle = \(circle)")
@@ -412,7 +325,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse delete circle = \(httpResponse)")
         print("delete circle status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         print("DELETE SUCCESS for circle")
         return true
@@ -435,7 +348,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCircleUsers = \(httpResponse)")
         print("fetchCircleUsers status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let users = try JSONDecoder().decode([UserDTO].self, from: data)
         print("GET SUCCESS circle users = \(users)")
@@ -459,7 +372,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCircleFeed = \(httpResponse)")
         print("fetchCircleFeed status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let feed = try JSONDecoder().decode(FeedResponseDTO.self, from: data)
         print("GET SUCCESS feed = \(feed)")
@@ -483,7 +396,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCircleEvents = \(httpResponse)")
         print("fetchCircleEvents status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let events = try JSONDecoder().decode([CalendarEventDTO].self, from: data)
         print("GET SUCCESS circle events = \(events)")
@@ -509,7 +422,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createCircleEvent = \(httpResponse)")
         print("createCircleEvent status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let event = try JSONDecoder().decode(CalendarEventDTO.self, from: data)
         print("POST SUCCESS event = \(event)")
@@ -533,7 +446,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCircleEvent = \(httpResponse)")
         print("fetchCircleEvent status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let event = try JSONDecoder().decode(CalendarEventDTO.self, from: data)
         print("GET SUCCESS event = \(event)")
@@ -559,7 +472,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCircleEvent = \(httpResponse)")
         print("editCircleEvent status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let event = try JSONDecoder().decode(CalendarEventDTO.self, from: data)
         print("PATCH SUCCESS event = \(event)")
@@ -583,7 +496,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCircleEvent = \(httpResponse)")
         print("editCircleEvent status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         print("DELETE SUCCESS for circle event")
         return true
@@ -606,7 +519,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCirclePosts = \(httpResponse)")
         print("fetchCirclePosts status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let posts = try JSONDecoder().decode([PostDTO].self, from: data)
         print("GET SUCCESS circle posts = \(posts)")
@@ -632,7 +545,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createCirclePost = \(httpResponse)")
         print("createCirclePost status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let post = try JSONDecoder().decode(PostDTO.self, from: data)
         print("POST SUCCESS circle post = \(post)")
@@ -656,7 +569,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchCirclePost = \(httpResponse)")
         print("fetchCirclePost status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let post = try JSONDecoder().decode(PostDTO.self, from: data)
         print("GET SUCCESS circle post = \(post)")
@@ -682,7 +595,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editCirclePost = \(httpResponse)")
         print("editCirclePost status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
 
         let post = try JSONDecoder().decode(PostDTO.self, from: data)
         print("PATCH SUCCESS circle post = \(post)")
@@ -706,7 +619,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse deleteCirclePost = \(httpResponse)")
         print("deleteCirclePost status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         print("DELETE SUCCESS for circle post")
         return true
@@ -729,7 +642,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchPostComments = \(httpResponse)")
         print("fetchPostComments status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let comments = try JSONDecoder().decode([CommentDTO].self, from: data)
         print("GET SUCCESS post comments = \(comments)")
@@ -755,7 +668,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse createPostComment = \(httpResponse)")
         print("createPostComment status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
         print("POST SUCCESS post comment = \(comment)")
@@ -779,7 +692,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse fetchPostComment = \(httpResponse)")
         print("fetchPostComment status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
         print("GET SUCCESS post comment = \(comment)")
@@ -805,7 +718,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editPostComment = \(httpResponse)")
         print("editPostComment status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         let comment = try JSONDecoder().decode(CommentDTO.self, from: data)
         print("PATCH SUCCESS post comment = \(comment)")
@@ -829,7 +742,7 @@ final class DefaultAPIClient: APIClient {
         print("httpResponse editPostComment = \(httpResponse)")
         print("editPostComment status = \(httpResponse.statusCode)")
         
-        try parseHTTPStatusCode(httpResponse)
+        try httpResponse.propagateError()
         
         print("DELETE SUCCESS on post comment")
         return true
