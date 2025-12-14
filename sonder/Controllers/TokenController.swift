@@ -1,5 +1,5 @@
 //
-//  TokenClient.swift
+//  TokenController.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/10/25.
@@ -9,7 +9,7 @@ import Security
 import SonderDTOs
 import Foundation
 
-final class TokenClient {
+final class TokenController {
     
     init () { }
     

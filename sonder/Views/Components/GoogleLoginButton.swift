@@ -20,14 +20,14 @@ struct GoogleLoginButton: View {
 
 extension GoogleLoginButton {
     func handlePress() {
-        let onboardingClient = OnboardingClient()
+        let onboardingController = OnboardingController()
         // Find a presenting view controller from the key window
         guard let presentingVC = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {
             print("No presenting VC")
             return
         }
         
-        onboardingClient.completeGoogleOAuth(with: onboardingModel, presentingVC: presentingVC)
+        onboardingController.completeGoogleOAuth(with: onboardingModel, presentingVC: presentingVC)
     }
 
     var googleButton: some View {

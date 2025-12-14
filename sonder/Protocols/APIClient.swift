@@ -64,7 +64,7 @@ protocol APIClient {
     // /circles/:circleID/posts/:postID PATCH
     func editCirclePost(circleID: UUID, postID: UUID, post: PostDTO, accessToken: TokenStringDTO) async throws -> PostDTO
     // /circles/:circleID/posts/:postID delete
-    func deleteCirclePost(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws -> Bool
+    func deleteCirclePost(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws
 
     // /circles/:circleID/posts/:postID/comments GET
     func fetchPostComments(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws -> [CommentDTO]

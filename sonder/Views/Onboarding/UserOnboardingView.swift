@@ -71,8 +71,8 @@ extension UserOnboardingView {
     }
     
     func handlePress() async throws {
-        let onboardingClient = OnboardingClient()
-        try await onboardingClient.onboardNewUser(with: onboardingModel, firstName: firstName, lastName: lastName, email: email, username: username)
+        let onboardingController = OnboardingController()
+        try await onboardingController.onboardNewUser(with: onboardingModel, firstName: firstName, lastName: lastName, email: email, username: username)
     }
 }
 
