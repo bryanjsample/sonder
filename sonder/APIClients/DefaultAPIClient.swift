@@ -190,9 +190,19 @@ final class DefaultAPIClient: APIClient {
         return circle
     }
     
-    // /circles/invitation POST
+    // /circles/invitation/create POST
+    func createCircleInvitation(accessToken: TokenStringDTO) async throws -> CircleInvitationDTO {
+        let url = try self.getURL("/circles/invitation/create")
+        let model = RequestModel(url: url, httpMethod: .post, accessToken: accessToken.token)
+        let data = try await self.performAPIAction(model)
+        let circleInvite = try JSONDecoder().decode(CircleInvitationDTO.self, from: data)
+        print("POST SUCCESS circleInviteCode = \(circleInvite)")
+        return circleInvite
+    }
+    
+    // /circles/invitation/join POST
     func joinCircleViaInvitation(_ invitationCode: InvitationStringDTO, accessToken: TokenStringDTO) async throws -> CircleDTO {
-        let url = try self.getURL("/circles/invitation")
+        let url = try self.getURL("/circles/invitation/join")
         let content = try JSONEncoder().encode(invitationCode)
         let model = RequestModel(url: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONContent: content)
         let data = try await self.performAPIAction(model)

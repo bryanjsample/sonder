@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LandingPageView: View {
+    @Bindable var onboardingModel: OnboardingModel
     @State var tabSelection: LandingPageRoute = .feed
     
     var body: some View {
@@ -25,12 +26,12 @@ struct LandingPageView: View {
                 CirclesView()
             }
             Tab("Me", systemImage: "person", value: .profile) {
-                UserProfileView()
+                UserProfileView(onboardingModel: onboardingModel)
             }
         }
     }
 }
 
-#Preview {
-    LandingPageView()
-}
+//#Preview {
+//    LandingPageView()
+//}

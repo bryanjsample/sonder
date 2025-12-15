@@ -77,10 +77,18 @@ final class TokenController {
         let clearQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                          kSecAttrService as String: tokenType.service]
         
+        print("clearQuery = \(clearQuery)")
+        
         let status = SecItemDelete(clearQuery as CFDictionary)
         
-        guard status == errSecSuccess else {
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            print("token status = \(status.words)")
             throw TokenError.tokenDidNotClear
+        }
+        
+        if status == errSecItemNotFound {
+            print("\(tokenType.description) token not found")
+            return
         }
         
         print("\(tokenType.description) key deleted")

@@ -31,7 +31,9 @@ protocol APIClient {
 
     // /circles POST
     func createCircle(_ circle: CircleDTO, accessToken: TokenStringDTO) async throws -> CircleDTO
-    // /circles/invitation POST
+    // /circles/invitation/create POST
+    func createCircleInvitation(accessToken: TokenStringDTO) async throws -> CircleInvitationDTO
+    // /circles/invitation/join POST
     func joinCircleViaInvitation(_ invitationCode: InvitationStringDTO, accessToken: TokenStringDTO) async throws -> CircleDTO
     // /circles/:circleID GET
     func fetchCircle(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> CircleDTO

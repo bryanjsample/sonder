@@ -36,7 +36,7 @@ private struct RootView: View {
             case .loading:
                 SplashView()
             case .authenticatedInCircle:
-                LandingPageView()
+                LandingPageView(onboardingModel: onboardingModel)
             case .notOnboarded:
                 UserOnboardingView(onboardingModel: onboardingModel)
             case .authenticatedNotInCircle:
