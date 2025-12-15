@@ -13,7 +13,7 @@ import Foundation
 protocol APIClient {
     // /auth/ios POST
     func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO
-    // /auth/refresh POST (USE WHEN ACCESS TOKEN IS EXPIRED)
+    // /auth/refresh POST (USE WHEN ACCESS TOKEN IS EXPIRED AND WHEN RESTORING SESSION)
     func requestNewAccessToken(refreshToken: TokenStringDTO) async throws -> TokenResponseDTO
     
     // /me GET

@@ -19,7 +19,9 @@ struct sonderApp: App {
             RootView(onboardingModel: onboardingModel)
                 .onAppear {
                     let onboardingController = OnboardingController()
-                    onboardingController.startup()
+                    Task {
+                        await onboardingController.startup(with: onboardingModel)
+                    }
                 }
         }
     }
@@ -49,7 +51,7 @@ private struct RootView: View {
                     Text("Error").font(.headline)
                     Text(message).font(.subheadline)
                     Button("Retry") {
-                        onboardingModel.status = .unauthenticated
+                        onboardingModel.unauthenticated()
                     }
                 }
                 .padding(Constants.padding)
