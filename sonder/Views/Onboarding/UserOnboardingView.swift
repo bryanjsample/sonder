@@ -58,7 +58,7 @@ extension UserOnboardingView {
     var submitButton: some View {
         Button() {
             Task {
-                try await handlePress()
+                await handlePress()
             }
         } label: {
             Text("Create User")
@@ -70,9 +70,9 @@ extension UserOnboardingView {
         .fontWeight(.bold)
     }
     
-    func handlePress() async throws {
+    func handlePress() async {
         let onboardingController = OnboardingController()
-        await onboardingController.onboardNewUser(with: onboardingModel, firstName: firstName, lastName: lastName, email: email, username: username)
+        onboardingController.onboardNewUser(with: onboardingModel, firstName: firstName, lastName: lastName, email: email, username: username)
     }
 }
 

@@ -39,7 +39,7 @@ extension CircleInviteCodeView {
     
     var submitButton: some View {
         Button() {
-            onboardingModel.authenticatedInCircle()
+            handlePress()
         } label: {
             Text("Join Circle")
                 .frame(maxWidth: .infinity)
@@ -49,6 +49,11 @@ extension CircleInviteCodeView {
         .padding(Constants.padding)
         .fontWeight(.bold)
         .ignoresSafeArea(.keyboard)
+    }
+    
+    func handlePress() {
+        let onboardingController = OnboardingController()
+        onboardingController.joinCircleViaCode(with: onboardingModel, invitation: circleInviteCode)
     }
 }
 

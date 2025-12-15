@@ -18,12 +18,12 @@ final class OnboardingModel {
 
     var status: AuthStatus = .unauthenticated
     var user: UserDTO? = nil
+    var circle: CircleDTO? = nil
 
     init() { }
     
-    func notOnboarded(_ user: UserDTO) {
+    func notOnboarded() {
         self.status = .notOnboarded
-        self.user = user
     }
     
     func authenticatedNotInCircle() {
@@ -36,10 +36,21 @@ final class OnboardingModel {
     
     func unauthenticated() {
         self.status = .unauthenticated
+        self.user = nil
+        self.circle = nil
     }
     
     func loading() {
         self.status = .loading
+    }
+    
+    func updateUser(_ user: UserDTO) {
+        self.user = user
+    }
+    
+    func updateCircle(_ circle: CircleDTO) {
+        self.circle = circle
+        self.user?.circleID = circle.id
     }
 }
 

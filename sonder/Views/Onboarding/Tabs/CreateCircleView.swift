@@ -58,7 +58,7 @@ extension CreateCircleView {
     
     var submitButton: some View {
         Button() {
-            onboardingModel.authenticatedInCircle()
+            handlePress()
         } label: {
             Text("Create Circle")
                 .frame(maxWidth: .infinity)
@@ -68,6 +68,11 @@ extension CreateCircleView {
         .padding(Constants.padding)
         .fontWeight(.bold)
         .ignoresSafeArea(.keyboard)
+    }
+    
+    func handlePress() {
+        let onboardingController = OnboardingController()
+        onboardingController.onboardNewCircle(with: onboardingModel, circleName: name, description: description)
     }
 }
 
