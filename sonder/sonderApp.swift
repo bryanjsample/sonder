@@ -18,8 +18,8 @@ struct sonderApp: App {
         WindowGroup {
             RootView(onboardingModel: onboardingModel)
                 .onAppear {
-                    let onboardingClient = OnboardingClient()
-                    onboardingClient.startup()
+                    let onboardingController = OnboardingController()
+                    onboardingController.startup()
                 }
         }
     }
