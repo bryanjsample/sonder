@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CreateCircleView: View {
     
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State private var name: String = ""
     @State private var description: String = ""
     @FocusState private var isFocused: Bool
@@ -72,10 +72,10 @@ extension CreateCircleView {
     
     func handlePress() {
         let onboardingController = OnboardingController()
-        onboardingController.onboardNewCircle(with: onboardingModel, circleName: name, description: description)
+        onboardingController.onboardNewCircle(with: authModel, circleName: name, description: description)
     }
 }
 
 #Preview {
-    CreateCircleView(onboardingModel: OnboardingModel())
+    CreateCircleView(authModel: AuthModel())
 }

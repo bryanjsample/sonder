@@ -10,7 +10,7 @@ import SonderDTOs
 
 struct UserOnboardingView: View {
     
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State var firstName: String = ""
     @State var lastName: String = ""
     @State var email: String = ""
@@ -46,10 +46,10 @@ extension UserOnboardingView {
                     .textInputAutocapitalization(.never)
             }
         }.onAppear {
-            firstName = onboardingModel.user?.firstName ?? ""
-            lastName = onboardingModel.user?.lastName ?? ""
-            email = onboardingModel.user?.email ?? ""
-            username = onboardingModel.user?.username ?? ""
+            firstName = authModel.user?.firstName ?? ""
+            lastName = authModel.user?.lastName ?? ""
+            email = authModel.user?.email ?? ""
+            username = authModel.user?.username ?? ""
         }
         .scrollDismissesKeyboard(.immediately)
         .scrollContentBackground(.hidden)
@@ -72,10 +72,10 @@ extension UserOnboardingView {
     
     func handlePress() async {
         let onboardingController = OnboardingController()
-        onboardingController.onboardNewUser(with: onboardingModel, firstName: firstName, lastName: lastName, email: email, username: username)
+        onboardingController.onboardNewUser(with: authModel, firstName: firstName, lastName: lastName, email: email, username: username)
     }
 }
 
 #Preview {
-    UserOnboardingView(onboardingModel: OnboardingModel())
+    UserOnboardingView(authModel: AuthModel())
 }

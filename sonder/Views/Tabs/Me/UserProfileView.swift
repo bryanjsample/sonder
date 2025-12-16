@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserProfileView: View {
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     
     var body: some View {
         signOutButton
@@ -33,6 +33,6 @@ extension UserProfileView {
     
     func handlePress() async {
         let onboardingController = OnboardingController()
-        onboardingController.signOut(with: onboardingModel)
+        onboardingController.signOut(with: authModel)
     }
 }

@@ -11,7 +11,7 @@ import GoogleSignInSwift
 import SonderDTOs
 
 struct GoogleLoginButton: View {
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     
     var body: some View {
         googleButton
@@ -27,7 +27,7 @@ extension GoogleLoginButton {
             return
         }
         
-        onboardingController.completeGoogleOAuth(with: onboardingModel, presentingVC: presentingVC)
+        onboardingController.completeGoogleOAuth(with: authModel, presentingVC: presentingVC)
     }
 
     var googleButton: some View {

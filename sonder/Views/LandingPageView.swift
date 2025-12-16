@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LandingPageView: View {
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State var tabSelection: LandingPageRoute = .feed
     @State var showingNewPost = false
     
@@ -27,7 +27,7 @@ struct LandingPageView: View {
                 CirclesView()
             }
             Tab("Me", systemImage: "person", value: LandingPageRoute.profile) {
-                UserProfileView(onboardingModel: onboardingModel)
+                UserProfileView(authModel: authModel)
             }
         }
         .onChange(of: tabSelection) { oldValue, newValue in
@@ -44,5 +44,5 @@ struct LandingPageView: View {
 
 
 #Preview {
-    LandingPageView(onboardingModel: OnboardingModel())
+    LandingPageView(authModel: AuthModel())
 }

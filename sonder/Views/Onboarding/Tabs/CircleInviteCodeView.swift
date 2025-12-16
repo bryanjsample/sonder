@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CircleInviteCodeView: View {
     
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State private var circleInviteCode: String = ""
     
     var body: some View {
@@ -53,10 +53,10 @@ extension CircleInviteCodeView {
     
     func handlePress() {
         let onboardingController = OnboardingController()
-        onboardingController.joinCircleViaCode(with: onboardingModel, invitation: circleInviteCode)
+        onboardingController.joinCircleViaCode(with: authModel, invitation: circleInviteCode)
     }
 }
 
 #Preview {
-    CircleInviteCodeView(onboardingModel: OnboardingModel())
+    CircleInviteCodeView(authModel: AuthModel())
 }
