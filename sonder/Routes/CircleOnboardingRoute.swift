@@ -7,6 +7,6 @@
 
 import SonderDTOs
 
-enum CircleOnboardingRoute {
+enum CircleOnboardingRoute: Hashable {
     case create, invite
 }

@@ -65,7 +65,7 @@ extension UserOnboardingView {
                 .frame(maxWidth: .infinity)
                 .padding(Constants.padding)
         }
-        .buttonStyle(.glassProminent)
+        .buttonStyle(.borderedProminent)
         .padding(Constants.padding)
         .fontWeight(.bold)
     }
