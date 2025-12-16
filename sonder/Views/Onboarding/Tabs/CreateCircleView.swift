@@ -57,22 +57,10 @@ extension CreateCircleView {
     }
     
     var submitButton: some View {
-        Button() {
-            handlePress()
-        } label: {
-            Text("Create Circle")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
+        GenericButton(title: "Create Circle") {
+            let onboardingController = OnboardingController()
+            onboardingController.onboardNewCircle(with: authModel, circleName: name, description: description)
         }
-        .buttonStyle(.borderedProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-        .ignoresSafeArea(.keyboard)
-    }
-    
-    func handlePress() {
-        let onboardingController = OnboardingController()
-        onboardingController.onboardNewCircle(with: authModel, circleName: name, description: description)
     }
 }
 

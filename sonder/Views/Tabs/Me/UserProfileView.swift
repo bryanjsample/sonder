@@ -17,22 +17,8 @@ struct UserProfileView: View {
 
 extension UserProfileView {
     var signOutButton: some View {
-        Button() {
-            Task {
-                await handlePress()
-            }
-        } label: {
-            Text("Sign Out of Sonder")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
-        }
-        .buttonStyle(.borderedProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-    }
-    
-    func handlePress() async {
-        let onboardingController = OnboardingController()
-        onboardingController.signOut(with: authModel)
+        GenericButton(title: "Sign Out of Sonder") {
+            let onboardingController = OnboardingController()
+            onboardingController.signOut(with: authModel)        }
     }
 }

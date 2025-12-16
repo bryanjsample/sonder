@@ -28,18 +28,10 @@ struct CirclesView: View {
 
 extension CirclesView {
     var generateInviteCodeButton: some View {
-        Button() {
+        GenericButton(title: "Generate Invite Code") {
             Task {
                 try await circlesController.generateCircleInviteCode(with: circlesVM)
             }
-        } label: {
-            Text("Generate Invite Code")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
         }
-        .buttonStyle(.borderedProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-        .ignoresSafeArea(.keyboard)
     }
 }

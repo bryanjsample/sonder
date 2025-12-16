@@ -38,22 +38,10 @@ extension CircleInviteCodeView {
     }
     
     var submitButton: some View {
-        Button() {
-            handlePress()
-        } label: {
-            Text("Join Circle")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
+        GenericButton(title: "Join Circle") {
+            let onboardingController = OnboardingController()
+            onboardingController.joinCircleViaCode(with: authModel, invitation: circleInviteCode)
         }
-        .buttonStyle(.borderedProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-        .ignoresSafeArea(.keyboard)
-    }
-    
-    func handlePress() {
-        let onboardingController = OnboardingController()
-        onboardingController.joinCircleViaCode(with: authModel, invitation: circleInviteCode)
     }
 }
 

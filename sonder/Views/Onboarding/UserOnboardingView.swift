@@ -56,23 +56,10 @@ extension UserOnboardingView {
     }
     
     var submitButton: some View {
-        Button() {
-            Task {
-                await handlePress()
-            }
-        } label: {
-            Text("Create User")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
+        GenericButton(title: "Create User") {
+            let onboardingController = OnboardingController()
+            onboardingController.onboardNewUser(with: authModel, firstName: firstName, lastName: lastName, email: email, username: username)
         }
-        .buttonStyle(.borderedProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-    }
-    
-    func handlePress() async {
-        let onboardingController = OnboardingController()
-        onboardingController.onboardNewUser(with: authModel, firstName: firstName, lastName: lastName, email: email, username: username)
     }
 }
 
