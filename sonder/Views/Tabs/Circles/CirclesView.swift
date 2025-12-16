@@ -12,10 +12,17 @@ import SonderDTOs
 struct CirclesView: View {
     
     @State private var circlesVM = CirclesViewModel()
-    
+    let circlesController = CirclesViewController()
+
     var body: some View {
         Text(circlesVM.circleInvitation?.invitation ?? "Invitation not generated")
-        generateInviteCodeButton
+        generateInviteCodeButton.onAppear {
+            Task {
+                if circlesVM.circleInvitation == nil {
+                    try await circlesController.getCircleInvitation(with: circlesVM)
+                }
+            }
+        }
     }
 }
 
@@ -23,7 +30,7 @@ extension CirclesView {
     var generateInviteCodeButton: some View {
         Button() {
             Task {
-                try await handlePress()
+                try await circlesController.generateCircleInviteCode(with: circlesVM)
             }
         } label: {
             Text("Generate Invite Code")
@@ -34,10 +41,5 @@ extension CirclesView {
         .padding(Constants.padding)
         .fontWeight(.bold)
         .ignoresSafeArea(.keyboard)
-    }
-    
-    func handlePress() async throws {
-        let circlesController = CirclesViewController()
-        try await circlesController.generateCircleInviteCode(with: circlesVM)
     }
 }
