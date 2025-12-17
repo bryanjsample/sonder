@@ -11,11 +11,13 @@ import GoogleSignIn
 
 final class OnboardingController {
     
+    @Bindable var authModel: AuthModel
     let apiClient = DefaultAPIClient()
+    let tokenController = TokenController()
     
-    init() { }
+    init(authModel: AuthModel) { self.authModel = authModel }
     
-    func handleOnboardingError(with authModel: AuthModel, error: Error) {
+    func handleOnboardingError(_ error: Error) {
         switch error {
         case APIError.badRequest:
             print("badRequest error thrown in the api client")
@@ -46,25 +48,25 @@ final class OnboardingController {
     }
     
     @MainActor
-    func runOnboardingFlow(with authModel: AuthModel, restoringSession: Bool = false, _ operation: @escaping () async throws -> Void) {
-        authModel.loading()
+    func runOnboardingFlow(restoringSession: Bool = false, _ operation: @escaping () async throws -> Void) {
+        self.authModel.loading()
         Task {
             do {
                 try await operation()
             } catch {
                 if restoringSession {
-                    self.restoreGoogleInstance(with: authModel)
+                    self.restoreGoogleInstance()
                 } else {
-                    self.handleOnboardingError(with: authModel, error: error)
+                    self.handleOnboardingError(error)
                 }
             }
         }
     }
     
     @MainActor
-    func transition(with authModel: AuthModel) {
+    func transition() {
         
-        guard let user = authModel.user else {
+        guard let user = self.authModel.user else {
             print("user is nil within onboarding model, cannot transition to new view")
             return
         }
@@ -72,7 +74,7 @@ final class OnboardingController {
         if let userIsOnboarded = user.isOnboarded {
             if !userIsOnboarded {
                 print("user is not onboarded")
-                authModel.notOnboarded()
+                self.authModel.notOnboarded()
                 return
             } else {
                 print("user is onboarded")
@@ -81,28 +83,27 @@ final class OnboardingController {
 
         if user.circleID != nil {
             print("user.circleID is not nil")
-            authModel.authenticatedInCircle()
+            self.authModel.authenticatedInCircle()
             return
         } else {
             print("user.circleID is nil")
-            authModel.authenticatedNotInCircle()
+            self.authModel.authenticatedNotInCircle()
             return
         }
     }
     
-    func startup(with authModel: AuthModel) async {
-        await restoreSession(with: authModel)
+    func startup() async {
+        await restoreSession()
     }
     
-    func restoreSession(with authModel: AuthModel) async {
-        runOnboardingFlow(with: authModel, restoringSession: true) {
-            let tokenController = TokenController()
-            let refreshToken = try tokenController.loadToken(as: .refresh)
+    func restoreSession() async {
+        runOnboardingFlow(restoringSession: true) {
+            let refreshToken = try self.tokenController.loadToken(as: .refresh)
             let tokens = try await self.apiClient.requestNewAccessToken(refreshToken: refreshToken)
-            try tokenController.storeTokens(tokens: tokens)
-            let accessToken = try tokenController.loadToken(as: .access)
-            authModel.user = try await self.apiClient.fetchUser(accessToken: accessToken)
-            self.transition(with: authModel)
+            try self.tokenController.storeTokens(tokens: tokens)
+            let accessToken = try self.tokenController.loadToken(as: .access)
+            self.authModel.user = try await self.apiClient.fetchUser(accessToken: accessToken)
+            self.transition()
         }
     }
 }

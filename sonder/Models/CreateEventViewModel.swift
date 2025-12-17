@@ -8,6 +8,7 @@
 import SwiftUI
 import SonderDTOs
 
+@Observable
 final class CreateEventViewModel {
     
     var title: String = ""

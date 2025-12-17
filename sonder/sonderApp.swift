@@ -18,9 +18,9 @@ struct sonderApp: App {
         WindowGroup {
             RootView(authModel: authModel)
                 .onAppear {
-                    let onboardingController = OnboardingController()
+                    let onboardingController = OnboardingController(authModel: authModel)
                     Task {
-                        await onboardingController.startup(with: authModel)
+                        await onboardingController.startup()
                     }
                 }
         }

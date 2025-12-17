@@ -17,7 +17,7 @@ struct CircleInviteCodeView: View {
             BackgroundColor()
                 .ignoresSafeArea(.all)
             VStack {
-                SonderTitleText.titleBlock
+                SonderTitleText()
                 Spacer(minLength: 138.0)
                 inviteCodeForm
                 submitButton
@@ -39,8 +39,8 @@ extension CircleInviteCodeView {
     
     var submitButton: some View {
         GenericButton(title: "Join Circle") {
-            let onboardingController = OnboardingController()
-            onboardingController.joinCircleViaCode(with: authModel, invitation: circleInviteCode)
+            let onboardingController = OnboardingController(authModel: authModel)
+            onboardingController.joinCircleViaCode(invitation: circleInviteCode)
         }
     }
 }

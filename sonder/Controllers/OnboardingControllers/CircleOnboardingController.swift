@@ -9,30 +9,28 @@ import Foundation
 import SonderDTOs
 
 extension OnboardingController {
-    func onboardNewCircle(with authModel: AuthModel, circleName: String, description: String) {
-        self.runOnboardingFlow(with: authModel) {
+    func onboardNewCircle(circleName: String, description: String) {
+        self.runOnboardingFlow() {
             let dto = CircleDTO(name: circleName, description: description)
-            authModel.updateCircle(dto) // update within model to ensure that fields stay populated even if onboarding fails on server
-            let tokenController = TokenController()
-            let accessToken = try tokenController.loadToken(as: .access)
+            self.authModel.updateCircle(dto) // update within model to ensure that fields stay populated even if onboarding fails on server
+            let accessToken = try self.tokenController.loadToken(as: .access)
             let circle = try await self.apiClient.createCircle(dto, accessToken: accessToken)
-            authModel.updateCircle(circle)
+            self.authModel.updateCircle(circle)
             let user = try await self.apiClient.fetchUser(accessToken: accessToken)
-            authModel.updateUser(user)
-            self.transition(with: authModel)
+            self.authModel.updateUser(user)
+            self.transition()
         }
     }
     
-    func joinCircleViaCode(with authModel: AuthModel, invitation: String) {
-        self.runOnboardingFlow(with: authModel) {
+    func joinCircleViaCode(invitation: String) {
+        self.runOnboardingFlow() {
             let dto = InvitationStringDTO(invitation)
-            let tokenController = TokenController()
-            let accessToken = try tokenController.loadToken(as: .access)
+            let accessToken = try self.tokenController.loadToken(as: .access)
             let circle = try await self.apiClient.joinCircleViaInvitation(dto, accessToken: accessToken)
-            authModel.updateCircle(circle)
+            self.authModel.updateCircle(circle)
             let user = try await self.apiClient.fetchUser(accessToken: accessToken)
-            authModel.updateUser(user)
-            self.transition(with: authModel)
+            self.authModel.updateUser(user)
+            self.transition()
         }
     }
 }

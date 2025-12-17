@@ -13,7 +13,7 @@ struct LoginView: View {
     var body: some View {
         VStack {
             Spacer()
-            SonderTitleText.titleBlock
+            SonderTitleText()
             Spacer()
             GoogleLoginButton(authModel: authModel)
             Spacer()

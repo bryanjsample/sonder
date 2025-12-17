@@ -8,7 +8,7 @@
 import SwiftUI
 import SonderDTOs
 
-
+@Observable
 final class CreatePostViewModel {
     
     var content = ""

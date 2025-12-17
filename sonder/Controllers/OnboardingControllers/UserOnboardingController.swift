@@ -10,88 +10,84 @@ import SonderDTOs
 import GoogleSignIn
 
 extension OnboardingController {
-    func completeGoogleOAuth(with authModel: AuthModel, presentingVC: UIViewController) {
+    func completeGoogleOAuth(presentingVC: UIViewController) {
         GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
             if let error = error {
                 print("Google Sign-In failed: \(error.localizedDescription)")
-                authModel.unauthenticated()
+                self.authModel.unauthenticated()
                 return
             }
             
             guard let result = signInResult else {
                 print("Google Sign-In: No result returned")
-                authModel.unauthenticated()
+                self.authModel.unauthenticated()
                 return
             }
             
             let token = result.user.accessToken.tokenString
-            let tokenController = TokenController()
             
             Task {
-                await self.runOnboardingFlow(with: authModel) {
+                await self.runOnboardingFlow() {
 
                     let tokens = try await self.apiClient.authenticateViaGoogle(token)
-                    try await tokenController.storeTokens(tokens: tokens)
-                    let accessToken = try await tokenController.loadToken(as: .access)
+                    try await self.tokenController.storeTokens(tokens: tokens)
+                    let accessToken = try await self.tokenController.loadToken(as: .access)
                     let user = try await self.apiClient.fetchUser(accessToken: accessToken)
-                    await authModel.updateUser(user)
-                    await self.transition(with: authModel)
+                    await self.authModel.updateUser(user)
+                    await self.transition()
                 }
             }
             print("Google Sign-In succeeded for user: \(result.user.profile?.email ?? "<unknown>")")
         }
     }
     
-    func restoreGoogleInstance(with authModel: AuthModel) {
+    func restoreGoogleInstance() {
         GIDSignIn.sharedInstance.restorePreviousSignIn { restoreResult, error in
             if let error = error {
                 print("Google Restoration failed: \(error.localizedDescription)")
-                authModel.unauthenticated()
+                self.authModel.unauthenticated()
                 return
             }
             
             guard let result = restoreResult else {
                 print("Google Sign-In: No result returned")
-                authModel.unauthenticated()
+                self.authModel.unauthenticated()
                 return
             }
             
             let token = result.accessToken.tokenString
-            let tokenController = TokenController()
             
             Task {
-                await self.runOnboardingFlow(with: authModel) {
+                await self.runOnboardingFlow() {
                     let tokens = try await self.apiClient.authenticateViaGoogle(token)
-                    try await tokenController.storeTokens(tokens: tokens)
-                    let accessToken = try await tokenController.loadToken(as: .access)
+                    try await self.tokenController.storeTokens(tokens: tokens)
+                    let accessToken = try await self.tokenController.loadToken(as: .access)
                     let user = try await self.apiClient.fetchUser(accessToken: accessToken)
-                    await authModel.updateUser(user)
-                    await self.transition(with: authModel)
+                    await self.authModel.updateUser(user)
+                    await self.transition()
                 }
             }
         }
     }
     
-    func onboardNewUser(with authModel: AuthModel, firstName: String, lastName: String, email: String, username: String) {
-        self.runOnboardingFlow(with: authModel) {
+    func onboardNewUser(firstName: String, lastName: String, email: String, username: String) {
+        self.runOnboardingFlow() {
             let dto = UserDTO(email: email, firstName: firstName, lastName: lastName, username: username)
-            authModel.updateUser(dto) // update within model to ensure that fields stay populated even if onboarding fails on server
-            let tokenController = TokenController()
-            let accessToken = try tokenController.loadToken(as: .access)
+            self.authModel.updateUser(dto) // update within model to ensure that fields stay populated even if onboarding fails on server
+            let accessToken = try self.tokenController.loadToken(as: .access)
             let user = try await self.apiClient.onboardNewUser(dto, accessToken: accessToken)
-            authModel.updateUser(user)
-            self.transition(with: authModel)
+            self.authModel.updateUser(user)
+            self.transition()
         }
     }
     
-    func signOut(with authModel: AuthModel) {
+    func signOut() {
         do {
-            let tokenController = TokenController()
-            try tokenController.clearTokens()
+            try self.tokenController.clearTokens()
             GIDSignIn.sharedInstance.signOut()
-            authModel.unauthenticated()
+            self.authModel.unauthenticated()
         } catch {
-            self.handleOnboardingError(with: authModel, error: error)
+            self.handleOnboardingError(error)
         }
     }
 }

@@ -19,8 +19,8 @@ struct CreateCircleView: View {
             BackgroundColor()
                 .ignoresSafeArea(.all)
             VStack {
-                SonderTitleText.titleBlock
-                ProfilePicturePicker(defaultSystemImage: "figure.socialdance.circle.fill")
+                SonderTitleText()
+                ProfilePicturePicker(.circle, authModel: authModel, defaultSystemImage: "figure.socialdance.circle.fill")
                 circleForm
                 submitButton
             }.ignoresSafeArea(.keyboard)
@@ -58,8 +58,8 @@ extension CreateCircleView {
     
     var submitButton: some View {
         GenericButton(title: "Create Circle") {
-            let onboardingController = OnboardingController()
-            onboardingController.onboardNewCircle(with: authModel, circleName: name, description: description)
+            let onboardingController = OnboardingController(authModel: authModel)
+            onboardingController.onboardNewCircle(circleName: name, description: description)
         }
     }
 }

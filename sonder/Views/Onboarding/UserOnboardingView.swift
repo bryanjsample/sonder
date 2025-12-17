@@ -22,8 +22,12 @@ struct UserOnboardingView: View {
                 .ignoresSafeArea(.all)
             VStack {
                 Spacer()
-                SonderTitleText.titleBlock
-                ProfilePicturePicker(defaultSystemImage: "person.circle.fill")
+                SonderTitleText()
+                ProfilePicturePicker(
+                    .user,
+                    authModel: authModel,
+                    defaultSystemImage: "person.circle.fill"
+                )
                 onboardingForm
                 submitButton
             }.ignoresSafeArea(.keyboard)
@@ -57,8 +61,8 @@ extension UserOnboardingView {
     
     var submitButton: some View {
         GenericButton(title: "Create User") {
-            let onboardingController = OnboardingController()
-            onboardingController.onboardNewUser(with: authModel, firstName: firstName, lastName: lastName, email: email, username: username)
+            let onboardingController = OnboardingController(authModel: authModel)
+            onboardingController.onboardNewUser(firstName: firstName, lastName: lastName, email: email, username: username)
         }
     }
 }

@@ -8,10 +8,12 @@
 import SwiftUI
 
 final class CirclesViewController {
+    
+    @Bindable var authModel: AuthModel
     let apiClient = DefaultAPIClient()
     let tokenController = TokenController()
     
-    init() { }
+    init(authModel: AuthModel) { self.authModel = authModel }
     
     func generateCircleInviteCode(with circlesVM: CirclesViewModel) async throws {
         let accessToken = try tokenController.loadToken(as: .access)

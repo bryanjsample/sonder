@@ -15,16 +15,16 @@ struct LandingPageView: View {
     var body: some View {
         TabView(selection: $tabSelection) {
             Tab("Feed", systemImage: "newspaper", value: LandingPageRoute.feed) {
-                CircleFeedView()
+                CircleFeedView(authModel: authModel)
             }
             Tab("Calendar", systemImage: "calendar", value: LandingPageRoute.calendar) {
-                CircleCalendarView()
+                CircleCalendarView(authModel: authModel)
             }
             Tab("Post", systemImage: "square.and.pencil", value: LandingPageRoute.post) {
                 Color.clear
             }
             Tab("Circles", systemImage: "person.3", value: LandingPageRoute.circles) {
-                CirclesView()
+                CirclesView(authModel: authModel)
             }
             Tab("Me", systemImage: "person", value: LandingPageRoute.profile) {
                 UserProfileView(authModel: authModel)
@@ -37,7 +37,7 @@ struct LandingPageView: View {
             }
         }
         .sheet(isPresented: $showingNewPost) {
-            CreateFeedItemView()
+            CreateFeedItemView(authModel: authModel)
         }
     }
 }

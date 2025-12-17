@@ -10,6 +10,7 @@ import SonderDTOs
 
 struct CircleFeedView: View {
     
+    @Bindable var authModel: AuthModel
     @State var members: [UserDTO] = []
     
     var body: some View {

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct UserProfileView: View {
+    
     @Bindable var authModel: AuthModel
     
     var body: some View {
@@ -18,7 +19,8 @@ struct UserProfileView: View {
 extension UserProfileView {
     var signOutButton: some View {
         GenericButton(title: "Sign Out of Sonder") {
-            let onboardingController = OnboardingController()
-            onboardingController.signOut(with: authModel)        }
+            let onboardingController = OnboardingController(authModel: authModel)
+            onboardingController.signOut()
+        }
     }
 }

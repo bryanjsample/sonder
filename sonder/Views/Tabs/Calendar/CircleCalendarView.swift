@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct CircleCalendarView: View {
+    
+    @Bindable var authModel: AuthModel
+    
     var body: some View {
         Text("CircleCalendarView")
     }

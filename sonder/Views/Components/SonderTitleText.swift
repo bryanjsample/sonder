@@ -7,13 +7,11 @@
 
 import SwiftUI
 
-struct SonderTitleText {
-    static var titleBlock: some View {
-        VStack {
-            SonderTitleText.title
-            SonderTitleText.subText
-            SonderTitleText.emojiRow
-        }
+struct SonderTitleText: View {
+    var body: some View {
+        SonderTitleText.title
+        SonderTitleText.subText
+        SonderTitleText.emojiRow
     }
     
     static var title: some View {

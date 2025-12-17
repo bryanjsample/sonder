@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CreateFeedItemView: View {
     
+    @Bindable var authModel: AuthModel
     @State var tabSelection: CircleFeedItemRoute = .post
     
     var body: some View {
