@@ -7,10 +7,14 @@
 
 import SwiftUI
 
+enum CreateFeedItemRoute {
+    case post, event
+}
+
 struct CreateFeedItemView: View {
     
     @Bindable var authModel: AuthModel
-    @State var tabSelection: CircleFeedItemRoute = .post
+    @State var tabSelection: CreateFeedItemRoute = .post
     
     var body: some View {
         TabView(selection: $tabSelection) {

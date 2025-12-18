@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+enum CircleOnboardingRoute {
+    case create, invite
+}
+
 struct CircleOnboardingView: View {
     
     @Bindable var authModel: AuthModel

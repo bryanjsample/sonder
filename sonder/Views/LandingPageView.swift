@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+enum LandingPageRoute {
+    case feed, calendar, post, circles, profile
+}
+
 struct LandingPageView: View {
     @Bindable var authModel: AuthModel
     @State var tabSelection: LandingPageRoute = .feed
