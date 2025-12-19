@@ -1,5 +1,5 @@
 //
-//  CircleCalendarViewController.swift
+//  CircleFeedViewModel.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/15/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SonderDTOs
 
-final class CircleCalendarViewController {
+final class CircleFeedViewModel {
     
     @Bindable var authModel: AuthModel
     let apiClient = DefaultAPIClient()
@@ -60,17 +60,15 @@ final class CircleCalendarViewController {
     }
     
     @MainActor
-    func fetchEvents() async -> [CalendarEventDTO] {
-        var events: [CalendarEventDTO] = []
+    func fetchPosts() async -> [PostDTO] {
+        var posts: [PostDTO] = []
         do {
             let (circleID, _) = try self.getIDs()
             let accessToken = try self.tokenController.loadToken(as: .access)
-            events = try await self.apiClient.fetchCircleEvents(circleID, accessToken: accessToken)
+            posts = try await self.apiClient.fetchCirclePosts(circleID, accessToken: accessToken)
         } catch {
             self.handleFeedItemError(error)
         }
-        return events
+        return posts
     }
 }
-
-

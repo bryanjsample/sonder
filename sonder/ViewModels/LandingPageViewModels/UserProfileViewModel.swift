@@ -1,5 +1,5 @@
 //
-//  UserProfileViewController.swift
+//  UserProfileViewModel.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/15/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SonderDTOs
 
-final class UserProfileViewController {
+final class UserProfileViewModel {
     
     @Bindable var authModel: AuthModel
     let apiClient = DefaultAPIClient()

@@ -12,6 +12,12 @@ struct CircleCalendarView: View {
     
     @Bindable var authModel: AuthModel
     @State var events: [CalendarEventDTO] = []
+    var circleCalendarVM: CircleCalendarViewModel? = nil
+    
+    init(authModel: AuthModel) {
+        self.authModel = authModel
+        self.circleCalendarVM = CircleCalendarViewModel(authModel: authModel)
+    }
     
     var body: some View {
         List {
@@ -20,12 +26,10 @@ struct CircleCalendarView: View {
             }
         }.onAppear {
             Task {
-                let controller = CircleCalendarViewController(authModel: authModel)
-                events = await controller.fetchEvents()
+                events = await circleCalendarVM!.fetchEvents()
             }
         }.refreshable {
-            let controller = CircleCalendarViewController(authModel: authModel)
-            events = await controller.fetchEvents()
+            events = await circleCalendarVM!.fetchEvents()
         }
     }
 }

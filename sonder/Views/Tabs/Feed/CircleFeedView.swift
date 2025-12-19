@@ -12,6 +12,12 @@ struct CircleFeedView: View {
     
     @Bindable var authModel: AuthModel
     @State var posts: [PostDTO] = []
+    var circleFeedVM: CircleFeedViewModel? = nil
+    
+    init(authModel: AuthModel) {
+        self.authModel = authModel
+        self.circleFeedVM = CircleFeedViewModel(authModel: authModel)
+    }
     
     var body: some View {
         List {
@@ -20,12 +26,10 @@ struct CircleFeedView: View {
             }
         }.onAppear {
             Task {
-                let controller = CircleFeedViewController(authModel: authModel)
-                posts = await controller.fetchPosts()
+                posts = await circleFeedVM!.fetchPosts()
             }
         }.refreshable {
-            let controller = CircleFeedViewController(authModel: authModel)
-            posts = await controller.fetchPosts()
+            posts = await circleFeedVM!.fetchPosts()
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  CircleFeedViewModel.swift
+//  UserProfileModel.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/15/25.
@@ -9,7 +9,7 @@ import SwiftUI
 import SonderDTOs
 
 @Observable
-final class CircleFeedViewModel {
+final class UserProfileModel {
     
     init() { }
     

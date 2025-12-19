@@ -9,7 +9,7 @@ import SwiftUI
 import SonderDTOs
 
 @Observable
-final class CircleCalendarViewModel {
+final class CircleCalendarModel {
     
     init () { }
 }

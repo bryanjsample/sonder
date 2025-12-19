@@ -12,21 +12,20 @@ import SonderDTOs
 struct CirclesView: View {
     
     @Bindable var authModel: AuthModel
-    @State private var circlesVM = CirclesViewModel()
-    var circlesController: CirclesViewController? = nil
+    @State private var circle = CircleModel()
+    var circlesVM: CirclesViewModel? = nil
     
-    init(authModel: AuthModel, circlesVM: CirclesViewModel = CirclesViewModel()) {
+    init(authModel: AuthModel) {
         self.authModel = authModel
-        self.circlesVM = circlesVM
-        self.circlesController = CirclesViewController(authModel: authModel)
+        self.circlesVM = CirclesViewModel(authModel: authModel)
     }
 
     var body: some View {
-        Text(circlesVM.circleInvitation?.invitation ?? "Invitation not generated")
+        Text(circle.circleInvitation?.invitation ?? "Invitation not generated")
         generateInviteCodeButton.onAppear {
             Task {
-                if circlesVM.circleInvitation == nil {
-                    try await circlesController?.getCircleInvitation(with: circlesVM)
+                if circle.circleInvitation == nil {
+                    try await circlesVM?.getCircleInvitation(with: circle)
                 }
             }
         }
@@ -37,7 +36,7 @@ extension CirclesView {
     var generateInviteCodeButton: some View {
         GenericButton(title: "Generate Invite Code") {
             Task {
-                try await circlesController?.generateCircleInviteCode(with: circlesVM)
+                try await circlesVM?.generateCircleInviteCode(with: circle)
             }
         }
     }
