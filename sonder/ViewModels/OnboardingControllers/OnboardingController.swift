@@ -107,7 +107,8 @@ final class OnboardingController {
                 self.transition()
                 return
             }
-            self.authModel.circle = try await self.apiClient.fetchCircle(circleID, accessToken: accessToken)
+            let circle = try await self.apiClient.fetchCircle(circleID, accessToken: accessToken)
+            self.authModel.updateCircle(circle)
             self.transition()
         }
     }
