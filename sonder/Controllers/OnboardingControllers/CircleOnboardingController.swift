@@ -10,7 +10,7 @@ import SonderDTOs
 
 extension OnboardingController {
     func onboardNewCircle(circleName: String, description: String) {
-        self.runOnboardingFlow() {
+        self.runOnboardingFlow {
             let dto = CircleDTO(name: circleName, description: description)
             self.authModel.updateCircle(dto) // update within model to ensure that fields stay populated even if onboarding fails on server
             let accessToken = try self.tokenController.loadToken(as: .access)
@@ -23,7 +23,7 @@ extension OnboardingController {
     }
     
     func joinCircleViaCode(invitation: String) {
-        self.runOnboardingFlow() {
+        self.runOnboardingFlow {
             let dto = InvitationStringDTO(invitation)
             let accessToken = try self.tokenController.loadToken(as: .access)
             let circle = try await self.apiClient.joinCircleViaInvitation(dto, accessToken: accessToken)

@@ -1,5 +1,5 @@
 //
-//  CreateFeedItemViewModel.swift
+//  PostModel.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/15/25.
@@ -9,7 +9,9 @@ import SwiftUI
 import SonderDTOs
 
 @Observable
-final class CreateFeedItemViewModel {
+final class PostModel {
+    
+   var content = ""
     
     init() { }
     

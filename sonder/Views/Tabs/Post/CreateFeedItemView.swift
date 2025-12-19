@@ -19,10 +19,10 @@ struct CreateFeedItemView: View {
     var body: some View {
         TabView(selection: $tabSelection) {
             Tab("Post", systemImage: "square.and.pencil", value: .post) {
-                CreatePostView()
+                CreatePostView(authModel: authModel)
             }
             Tab("Event", systemImage: "calendar", value: .event) {
-                CreateEventView()
+                CreateEventView(authModel: authModel)
             }
         }
     }

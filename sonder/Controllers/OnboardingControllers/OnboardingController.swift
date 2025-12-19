@@ -103,6 +103,11 @@ final class OnboardingController {
             try self.tokenController.storeTokens(tokens: tokens)
             let accessToken = try self.tokenController.loadToken(as: .access)
             self.authModel.user = try await self.apiClient.fetchUser(accessToken: accessToken)
+            guard let circleID = self.authModel.user?.circleID else {
+                self.transition()
+                return
+            }
+            self.authModel.circle = try await self.apiClient.fetchCircle(circleID, accessToken: accessToken)
             self.transition()
         }
     }

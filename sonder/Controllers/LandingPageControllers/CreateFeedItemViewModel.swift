@@ -1,5 +1,5 @@
 //
-//  CircleCalendarViewController.swift
+//  CreateFeedItemViewModel.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/15/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SonderDTOs
 
-final class CircleCalendarViewController {
+final class CreateFeedItemViewModel {
     
     @Bindable var authModel: AuthModel
     let apiClient = DefaultAPIClient()
@@ -30,7 +30,7 @@ final class CircleCalendarViewController {
             print("tokens did not clear")
             authModel.unauthenticated()
         default:
-            print("this error has not been handled within handleFeedItemError")
+            print("this error has not been handled within handleFeedItemError : \(error)")
         }
     }
     
@@ -49,7 +49,7 @@ final class CircleCalendarViewController {
     }
     
     @MainActor
-    func runFeedActionFlow(_ operation: @escaping () async throws -> Void) {
+    func runFeedItemCreationFlow(_ operation: @escaping () async throws -> Void) {
         Task {
             do {
                 try await operation()
@@ -60,17 +60,25 @@ final class CircleCalendarViewController {
     }
     
     @MainActor
-    func fetchEvents() async -> [CalendarEventDTO] {
-        var events: [CalendarEventDTO] = []
-        do {
-            let (circleID, _) = try self.getIDs()
+    func createNewPost(_ postContent: String) {
+        self.runFeedItemCreationFlow {
+            let (circleID, userID) = try self.getIDs()
+            let dto = PostDTO(circleID: circleID, authorID: userID, content: postContent)
             let accessToken = try self.tokenController.loadToken(as: .access)
-            events = try await self.apiClient.fetchCircleEvents(circleID, accessToken: accessToken)
-        } catch {
-            self.handleFeedItemError(error)
+            let post = try await self.apiClient.createCirclePost(circleID, post: dto, accessToken: accessToken)
+            print("in view model post = \(post)")
         }
-        return events
+    }
+    
+    @MainActor
+    func createNewEvent(title: String, description: String, startTime: Date, endTime: Date) {
+        self.runFeedItemCreationFlow {
+            let (circleID, userID) = try self.getIDs()
+            let dto = CalendarEventDTO(hostID: userID, circleID: circleID, title: title, description: description, startTime: startTime, endTime: endTime)
+            print("before request: dto = \(dto)")
+            let accessToken = try self.tokenController.loadToken(as: .access)
+            let event = try await self.apiClient.createCircleEvent(circleID, event: dto, accessToken: accessToken)
+            print("in view model post = \(event)")
+        }
     }
 }
-
-

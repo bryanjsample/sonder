@@ -265,7 +265,9 @@ final class DefaultAPIClient: APIClient {
 
     func createCircleEvent(_ circleID: UUID, event: CalendarEventDTO, accessToken: TokenStringDTO) async throws -> CalendarEventDTO {
         let url = try self.getURL("/circles/\(circleID.uuidString)/events")
-        let content = try JSONEncoder().encode(event)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let content = try encoder.encode(event)
         let model = RequestModel(url: url, httpMethod: .post, accessToken: accessToken.token, bodyJSONContent: content)
         let data = try await self.performAPIAction(model)
         let event = try JSONDecoder().decode(CalendarEventDTO.self, from: data)
