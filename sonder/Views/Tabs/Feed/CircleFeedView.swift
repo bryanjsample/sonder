@@ -23,13 +23,7 @@ struct CircleFeedView: View {
         ScrollView {
             LazyVStack {
                 ForEach(feedItems) { item in
-                    switch item {
-                    case .post(let post):
-                        FeedPostComponent(authModel: authModel, post: post)
-                    case .event(let event):
-                        FeedEventComponent(authModel: authModel, event: event)
-                    }
-                    
+                    FeedItemComponent(authModel: authModel, item: item)
                 }
             }
         }.onAppear {
