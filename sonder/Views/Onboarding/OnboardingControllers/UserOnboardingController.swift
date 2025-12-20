@@ -82,9 +82,9 @@ extension OnboardingController {
         }
     }
     
-    func onboardNewUser(firstName: String, lastName: String, email: String, username: String) {
+    func onboardNewUser(firstName: String, lastName: String, email: String, username: String, pictureUrl: String) {
         self.runOnboardingFlow() {
-            let dto = UserDTO(email: email, firstName: firstName, lastName: lastName, username: username)
+            let dto = UserDTO(email: email, firstName: firstName, lastName: lastName, username: username, pictureUrl: pictureUrl)
             self.authModel.updateUser(dto) // update within model to ensure that fields stay populated even if onboarding fails on server
             let accessToken = try self.tokenController.loadToken(as: .access)
             let user = try await self.apiClient.onboardNewUser(dto, accessToken: accessToken)

@@ -15,6 +15,7 @@ struct UserOnboardingView: View {
     @State var lastName: String = ""
     @State var email: String = ""
     @State var username: String = ""
+    @State var pictureURL: String = ""
     
     var body: some View {
         ZStack {
@@ -55,6 +56,7 @@ extension UserOnboardingView {
             lastName = authModel.user?.lastName ?? ""
             email = authModel.user?.email ?? ""
             username = authModel.user?.username ?? ""
+            pictureURL = authModel.user?.pictureUrl ?? ""
         }
         .scrollDismissesKeyboard(.immediately)
         .scrollContentBackground(.hidden)
@@ -63,7 +65,8 @@ extension UserOnboardingView {
     var submitButton: some View {
         GenericButton(title: "Create User") {
             let onboardingController = OnboardingController(authModel: authModel)
-            onboardingController.onboardNewUser(firstName: firstName, lastName: lastName, email: email, username: username)
+            print("pictureURL = \(pictureURL)")
+            onboardingController.onboardNewUser(firstName: firstName, lastName: lastName, email: email, username: username, pictureUrl: pictureURL)
         }
     }
 }

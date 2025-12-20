@@ -13,24 +13,17 @@ struct FeedPostComponent: View {
     @Bindable var authModel: AuthModel
     var feedPostComponentVM: FeedPostComponentViewModel? = nil
     @State var post: PostDTO
-    @State var author: UserDTO? = nil
     
     init(authModel: AuthModel, post: PostDTO, author: UserDTO? = nil) {
         self.authModel = authModel
         self.feedPostComponentVM = FeedPostComponentViewModel(authModel: authModel)
         self.post = post
-        self.author = author
     }
 
     
     var body: some View {
         postComponent
             .background(.tertiary, in: RoundedRectangle(cornerRadius: Constants.padding))
-            .onAppear {
-                Task {
-                    self.author = try await self.feedPostComponentVM?.fetchAuthor(self.post)
-                }
-            }
             .padding(.horizontal, Constants.padding)
     }
     
@@ -58,7 +51,7 @@ extension FeedPostComponent {
     }
     
     var profilePicture: some View {
-        AsyncImage(url: URL(string:author?.pictureUrl ?? "")) { result in
+        AsyncImage(url: URL(string: post.author?.pictureUrl ?? "")) { result in
             if let image = result.image {
                 image.resizable()
                     .aspectRatio(contentMode: .fill)
@@ -72,7 +65,7 @@ extension FeedPostComponent {
     
     var name: some View {
         HStack {
-            Text(self.feedPostComponentVM?.getAuthorName(author) ?? "No name")
+            Text(self.feedPostComponentVM?.getAuthorName(post.author) ?? "No name")
                 .font(.title3)
             Spacer()
         }
@@ -80,7 +73,7 @@ extension FeedPostComponent {
     
     var username: some View {
         HStack {
-            Text(self.feedPostComponentVM?.getAuthorUsername(author) ?? "no username")
+            Text(self.feedPostComponentVM?.getAuthorUsername(post.author) ?? "no username")
                 .font(.caption)
                 .fontDesign(.rounded)
                 .foregroundStyle(.secondary)
