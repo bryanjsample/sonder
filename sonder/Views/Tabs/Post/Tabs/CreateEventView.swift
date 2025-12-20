@@ -31,7 +31,7 @@ struct CreateEventView: View {
                 Form {
                     Section("Event Details") {
                         TextField("Event Title", text: $title)
-                        TextField("Event Description", text: $description)
+                        GenericTextInput(inputDescription: "Event Description...", textBinding: $description)
                         DatePicker("Start Time", selection: $startTime)
                         DatePicker("End Time", selection: $endTime)
                     }
@@ -39,7 +39,7 @@ struct CreateEventView: View {
                 .scrollDismissesKeyboard(.immediately)
                 .scrollContentBackground(.hidden)
                 submitButton
-            }.ignoresSafeArea(.keyboard)
+            }
         }
     }
 }

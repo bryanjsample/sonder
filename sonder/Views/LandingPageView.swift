@@ -37,12 +37,15 @@ struct LandingPageView: View {
         .onChange(of: tabSelection) { oldValue, newValue in
             if newValue == .post {
                 showingNewPost = true
-                tabSelection = oldValue
             }
         }
-        .sheet(isPresented: $showingNewPost) {
+        .sheet(isPresented: $showingNewPost, onDismiss: resetTab) {
             CreateFeedItemView(authModel: authModel)
         }
+    }
+    
+    func resetTab() {
+        tabSelection = .feed
     }
 }
 

@@ -34,6 +34,12 @@ extension OnboardingController {
                     let accessToken = try await self.tokenController.loadToken(as: .access)
                     let user = try await self.apiClient.fetchUser(accessToken: accessToken)
                     await self.authModel.updateUser(user)
+                    guard let circleID = await self.authModel.user?.circleID else {
+                        await self.transition()
+                        return
+                    }
+                    let circle = try await self.apiClient.fetchCircle(circleID, accessToken: accessToken)
+                    await self.authModel.updateCircle(circle)
                     await self.transition()
                 }
             }

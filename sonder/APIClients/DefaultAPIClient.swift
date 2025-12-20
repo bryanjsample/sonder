@@ -244,6 +244,15 @@ final class DefaultAPIClient: APIClient {
         print("GET SUCCESS circle users = \(users)")
         return users
     }
+    
+    func fetchCircleUser(circleID: UUID, userID: UUID, accessToken: TokenStringDTO) async throws -> UserDTO {
+        let url = try self.getURL("/circles/\(circleID.uuidString)/users/\(userID.uuidString)")
+        let model = RequestModel(url: url, httpMethod: .get, accessToken: accessToken.token)
+        let data = try await self.performAPIAction(model)
+        let user = try JSONDecoder().decode(UserDTO.self, from: data)
+        print("GET SUCCESS circle user = \(user)")
+        return user
+    }
 
     func fetchCircleFeed(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> FeedResponseDTO {
         let url = try self.getURL("/circles/\(circleID.uuidString)/feed")

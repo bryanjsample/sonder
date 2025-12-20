@@ -30,7 +30,8 @@ struct UserOnboardingView: View {
                 )
                 onboardingForm
                 submitButton
-            }.ignoresSafeArea(.keyboard)
+                    .ignoresSafeArea(.keyboard)
+            }
         }
     }
 }

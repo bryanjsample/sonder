@@ -20,9 +20,11 @@ struct CircleFeedView: View {
     }
     
     var body: some View {
-        List {
-            ForEach(posts) { post in
-                Text("\(post.authorID.uuidString) : \(post.createdAt?.formatted() ?? "createdAt is nil") || \(post.content)")
+        ScrollView {
+            LazyVStack {
+                ForEach(posts) { post in
+                    FeedPostComponent(authModel: authModel, post: post)
+                }
             }
         }.onAppear {
             Task {

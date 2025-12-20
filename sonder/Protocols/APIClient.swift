@@ -45,6 +45,8 @@ protocol APIClient {
     func deleteCircle(_ circleID: UUID, accessToken: TokenStringDTO) async throws
     /// /circles/:circleID/users GET
     func fetchCircleUsers(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> [UserDTO]
+    /// /circles/:circleID/users/:userID GET
+    func fetchCircleUser(circleID: UUID, userID: UUID, accessToken: TokenStringDTO) async throws -> UserDTO
     /// /circles/:circleID/feed GET
     func fetchCircleFeed(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> FeedResponseDTO
 

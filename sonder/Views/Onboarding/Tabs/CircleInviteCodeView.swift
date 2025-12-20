@@ -21,7 +21,7 @@ struct CircleInviteCodeView: View {
                 Spacer(minLength: 138.0)
                 inviteCodeForm
                 submitButton
-            }.ignoresSafeArea(.keyboard)
+            }
         }
     }
 }

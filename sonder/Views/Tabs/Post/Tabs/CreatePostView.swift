@@ -24,16 +24,15 @@ struct CreatePostView: View {
             BackgroundColor()
                 .ignoresSafeArea(.all)
             VStack {
-                Spacer()
                 Form {
                     Section("Post Details") {
-                        TextField("Post Contents", text: $postContent)
+                        GenericTextInput(inputDescription: "Post Content...", textBinding: $postContent)
                     }
                 }
                 .scrollDismissesKeyboard(.immediately)
                 .scrollContentBackground(.hidden)
                 submitButton
-            }.ignoresSafeArea(.keyboard)
+            }
         }
     }
 }
@@ -42,6 +41,7 @@ extension CreatePostView {
     
     var submitButton: some View {
         GenericButton(title: "Create Post") {
+            print("on submit: post content = \(postContent)")
             createPostVM.createNewPost(postContent)
             dismiss()
         }

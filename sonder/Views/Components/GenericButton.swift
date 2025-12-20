@@ -21,6 +21,5 @@ struct GenericButton: View {
         .buttonStyle(.borderedProminent)
         .padding(Constants.padding)
         .fontWeight(.bold)
-        .ignoresSafeArea(.keyboard)
     }
 }
