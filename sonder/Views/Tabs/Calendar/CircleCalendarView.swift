@@ -20,9 +20,11 @@ struct CircleCalendarView: View {
     }
     
     var body: some View {
-        List {
-            ForEach(events) { event in
-                Text("\(event.hostID.uuidString) : \(event.createdAt?.formatted() ?? "createdAt is nil") || start = \(event.startTime) | end = \(event.endTime) || title = \(event.title) | desc = \(event.description)")
+        ScrollView {
+            LazyVStack {
+                ForEach(events) { event in
+                    FeedEventComponent(authModel: authModel, event: event)
+                }
             }
         }.onAppear {
             Task {

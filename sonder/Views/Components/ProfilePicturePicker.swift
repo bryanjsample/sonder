@@ -63,14 +63,14 @@ extension ProfilePicturePicker {
         Image(systemName: defaultSystemImage)
             .resizable()
             .aspectRatio(contentMode: .fill)
-            .frame(width: 100, height: 100, alignment: .topLeading)
+            .frame(width: 100, height: 100, alignment: .center)
     }
     
     var chosenProfilePicture: some View {
         Image(uiImage: profilePicture!)
             .resizable()
             .aspectRatio(contentMode: .fill)
-            .frame(width: 100, height: 100, alignment: .topLeading)
+            .frame(width: 100, height: 100, alignment: .center)
             .clipShape(.circle)
     }
     
@@ -80,7 +80,7 @@ extension ProfilePicturePicker {
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100, alignment: .topLeading)
+                    .frame(width: 100, height: 100, alignment: .center)
                     .clipShape(.circle)
             } else {
                 placeholderPicture

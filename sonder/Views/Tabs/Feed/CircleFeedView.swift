@@ -11,7 +11,7 @@ import SonderDTOs
 struct CircleFeedView: View {
     
     @Bindable var authModel: AuthModel
-    @State var posts: [PostDTO] = []
+    @State var feedItems: [FeedItemDTO] = []
     var circleFeedVM: CircleFeedViewModel? = nil
     
     init(authModel: AuthModel) {
@@ -22,16 +22,22 @@ struct CircleFeedView: View {
     var body: some View {
         ScrollView {
             LazyVStack {
-                ForEach(posts) { post in
-                    FeedPostComponent(authModel: authModel, post: post)
+                ForEach(feedItems) { item in
+                    switch item {
+                    case .post(let post):
+                        FeedPostComponent(authModel: authModel, post: post)
+                    case .event(let event):
+                        FeedEventComponent(authModel: authModel, event: event)
+                    }
+                    
                 }
             }
         }.onAppear {
             Task {
-                posts = await circleFeedVM!.fetchPosts()
+                feedItems = await circleFeedVM!.fetchFeedItems()
             }
         }.refreshable {
-            posts = await circleFeedVM!.fetchPosts()
+            feedItems = await circleFeedVM!.fetchFeedItems()
         }
     }
 }

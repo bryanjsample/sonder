@@ -71,4 +71,18 @@ final class CircleFeedViewModel {
         }
         return posts
     }
+    
+    @MainActor
+    func fetchFeedItems() async -> [FeedItemDTO] {
+        var items: [FeedItemDTO] = []
+        do {
+            let (circleID, _ ) = try self.getIDs()
+            let accessToken = try self.tokenController.loadToken(as: .access)
+            let feed = try await self.apiClient.fetchCircleFeed(circleID, accessToken: accessToken)
+            items = feed.items
+        } catch {
+            self.handleFeedItemError(error)
+        }
+        return items
+    }
 }

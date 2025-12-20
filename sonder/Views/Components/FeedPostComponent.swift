@@ -11,12 +11,10 @@ import SonderDTOs
 struct FeedPostComponent: View {
     
     @Bindable var authModel: AuthModel
-    var feedPostComponentVM: FeedPostComponentViewModel? = nil
     @State var post: PostDTO
     
     init(authModel: AuthModel, post: PostDTO, author: UserDTO? = nil) {
         self.authModel = authModel
-        self.feedPostComponentVM = FeedPostComponentViewModel(authModel: authModel)
         self.post = post
     }
 
@@ -47,25 +45,25 @@ extension FeedPostComponent {
             }
             Spacer()
             postDateStamp
-        }.padding(.bottom, Constants.padding)
+        }.padding(.bottom, Constants.padding / 2)
     }
     
     var profilePicture: some View {
-        AsyncImage(url: URL(string: post.author?.pictureUrl ?? "")) { result in
+        AsyncImage(url: URL(string: self.post.author?.pictureUrl ?? "")) { result in
             if let image = result.image {
                 image.resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40, alignment: .topLeading)
+                    .frame(width: 40, height: 40, alignment: .center)
                     .clipShape(.circle)
             } else {
                 placeholderPicture
             }
-        }.padding(.trailing, Constants.padding)
+        }.padding(.trailing, Constants.padding / 2)
     }
     
     var name: some View {
         HStack {
-            Text(self.feedPostComponentVM?.getAuthorName(post.author) ?? "No name")
+            Text("\(self.post.author?.firstName ?? "no first name") \(self.post.author?.lastName ?? "no last name")")
                 .font(.title3)
             Spacer()
         }
@@ -73,9 +71,9 @@ extension FeedPostComponent {
     
     var username: some View {
         HStack {
-            Text(self.feedPostComponentVM?.getAuthorUsername(post.author) ?? "no username")
+            Text(self.post.author?.username ?? "no username")
                 .font(.caption)
-                .fontDesign(.rounded)
+                .fontDesign(.monospaced)
                 .foregroundStyle(.secondary)
             Spacer()
         }
@@ -97,15 +95,16 @@ extension FeedPostComponent {
     
     var postContent: some View {
         HStack {
-            Text(post.content)
+            Text(self.post.content)
             Spacer()
-        }.padding(.bottom, Constants.padding)
+        }.padding(.bottom, Constants.padding / 2)
     }
     
     var postDateStamp: some View {
         HStack {
             Spacer()
-            Text(post.createdAt?.formatted(date: .abbreviated, time: .omitted) ?? "no date")
+            Text(self.post.createdAt?.formatted(date: .abbreviated, time: .omitted) ?? "no date")
+                .font(.caption)
                 .fontDesign(.monospaced)
                 .foregroundStyle(.secondary)
         }
@@ -113,11 +112,17 @@ extension FeedPostComponent {
     
     var postTimeStamp: some View {
         HStack {
-            Text(post.createdAt?.formatted(date: .omitted, time: .shortened) ?? "no time")
+            Text(self.post.createdAt?.formatted(date: .omitted, time: .shortened) ?? "no time")
                 .font(.caption)
                 .fontDesign(.monospaced)
                 .foregroundStyle(.secondary)
             Spacer()
         }
     }
+}
+
+#Preview {
+    let user = UserDTO(email: "bryanjsample@gmail.com", firstName: "Bryan", lastName: "Sample", username: "bsizzle", pictureUrl: "https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg")
+    let post = PostDTO(circleID: UUID(uuidString: "40312D89-632E-40D7-A468-07356390C642") ?? UUID(), authorID: UUID(uuidString: "E6D09AE3-2BFF-4DBA-83C0-FFF98BA22D80") ?? UUID(), author: user , content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.", createdAt: Date.now)
+    FeedPostComponent(authModel: AuthModel(), post: post)
 }
