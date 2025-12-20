@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct UserProfileView: View {
-    @Bindable var onboardingModel: OnboardingModel
+    
+    @Bindable var authModel: AuthModel
     
     var body: some View {
         signOutButton
@@ -17,22 +18,9 @@ struct UserProfileView: View {
 
 extension UserProfileView {
     var signOutButton: some View {
-        Button() {
-            Task {
-                await handlePress()
-            }
-        } label: {
-            Text("Sign Out of Sonder")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
+        GenericButton(title: "Sign Out of Sonder") {
+            let onboardingController = OnboardingController(authModel: authModel)
+            onboardingController.signOut()
         }
-        .buttonStyle(.glassProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-    }
-    
-    func handlePress() async {
-        let onboardingController = OnboardingController()
-        onboardingController.signOut(with: onboardingModel)
     }
 }

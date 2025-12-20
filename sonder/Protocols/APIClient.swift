@@ -11,74 +11,76 @@ import Foundation
 // THIS IS RELATIVELY REDUNDANT AND RIGHT NOW SERVES NO PURPOSE OTHER THAN EASY OBSERVATION OF AVAILABLE ENDPOINTS AND THEIR ARGUMENTS AND RETURN TYPE
 
 protocol APIClient {
-    // /auth/ios POST
+    /// /auth/ios POST
     func authenticateViaGoogle(_ googleProfileAPIKey: String) async throws -> TokenResponseDTO
-    // /auth/refresh POST (USE WHEN ACCESS TOKEN IS EXPIRED AND WHEN RESTORING SESSION)
+    /// /auth/refresh POST
     func requestNewAccessToken(refreshToken: TokenStringDTO) async throws -> TokenResponseDTO
     
-    // /me GET
+    /// /me GET
     func fetchUser(accessToken: TokenStringDTO) async throws -> UserDTO
-    // /me PATCH
+    /// /me PATCH
     func editUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO
-    // /me DELETE
+    /// /me DELETE
     func deleteUser(accessToken: TokenStringDTO) async throws
-    // /me/onboard POST
+    /// /me/onboard POST
     func onboardNewUser(_ user: UserDTO, accessToken: TokenStringDTO) async throws -> UserDTO
-    // /me/events GET
+    /// /me/events GET
     func fetchUserEvents(accessToken: TokenStringDTO) async throws -> [CalendarEventDTO]
-    // /me/posts GET
+    /// /me/posts GET
     func fetchUserPosts(accessToken: TokenStringDTO) async throws -> [PostDTO]
 
-    // /circles POST
+    /// /circles POST
     func createCircle(_ circle: CircleDTO, accessToken: TokenStringDTO) async throws -> CircleDTO
-    // /circles/invitation GET
+    /// /circles/invitation GET
     func getCircleInvitation(accessToken: TokenStringDTO) async throws -> CircleInvitationDTO
-    // /circles/invitation/create POST
+    /// /circles/invitation/create POST
     func createCircleInvitation(accessToken: TokenStringDTO) async throws -> CircleInvitationDTO
-    // /circles/invitation/join POST
+    /// /circles/invitation/join POST
     func joinCircleViaInvitation(_ invitationCode: InvitationStringDTO, accessToken: TokenStringDTO) async throws -> CircleDTO
-    // /circles/:circleID GET
+    /// /circles/:circleID GET
     func fetchCircle(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> CircleDTO
-    // /circles/:circleID PATCH
+    /// /circles/:circleID PATCH
     func editCircle(_ circle: CircleDTO, circleID: UUID, accessToken: TokenStringDTO) async throws -> CircleDTO
-    // /circles/:circleID DELETE
+    /// /circles/:circleID DELETE
     func deleteCircle(_ circleID: UUID, accessToken: TokenStringDTO) async throws
-    // /circles/:circleID/users GET
+    /// /circles/:circleID/users GET
     func fetchCircleUsers(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> [UserDTO]
-    // /circles/:circleID/feed GET
+    /// /circles/:circleID/users/:userID GET
+    func fetchCircleUser(circleID: UUID, userID: UUID, accessToken: TokenStringDTO) async throws -> UserDTO
+    /// /circles/:circleID/feed GET
     func fetchCircleFeed(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> FeedResponseDTO
 
-    // /circles/:circleID/events GET
+    /// /circles/:circleID/events GET
     func fetchCircleEvents(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> [CalendarEventDTO]
-    // /circles/:circleID/events POST
+    /// /circles/:circleID/events POST
     func createCircleEvent(_ circleID: UUID, event: CalendarEventDTO, accessToken: TokenStringDTO) async throws -> CalendarEventDTO
-    // /circles:circleID/events/:eventID GET
+    /// /circles:circleID/events/:eventID GET
     func fetchCircleEvent(circleID: UUID, eventID: UUID, accessToken: TokenStringDTO) async throws -> CalendarEventDTO
-    // /circles/:circleID/events/:eventID PATCH
+    /// /circles/:circleID/events/:eventID PATCH
     func editCircleEvent(circleID: UUID, eventID: UUID, event: CalendarEventDTO, accessToken: TokenStringDTO) async throws -> CalendarEventDTO
-    // /circles/:circleID/events/:eventID DELETE
+    /// /circles/:circleID/events/:eventID DELETE
     func deleteCircleEvent(circleID: UUID, eventID: UUID, accessToken: TokenStringDTO) async throws
     
-    // /circles/:circleID/posts GET
+    /// /circles/:circleID/posts GET
     func fetchCirclePosts(_ circleID: UUID, accessToken: TokenStringDTO) async throws -> [PostDTO]
-    // /circles/:circleID/posts POST
+    /// /circles/:circleID/posts POST
     func createCirclePost(_ circleID: UUID, post: PostDTO, accessToken: TokenStringDTO) async throws -> PostDTO
-    // /circles/:circleID/posts/:postID GET
+    /// /circles/:circleID/posts/:postID GET
     func fetchCirclePost(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws -> PostDTO
-    // /circles/:circleID/posts/:postID PATCH
+    /// /circles/:circleID/posts/:postID PATCH
     func editCirclePost(circleID: UUID, postID: UUID, post: PostDTO, accessToken: TokenStringDTO) async throws -> PostDTO
-    // /circles/:circleID/posts/:postID delete
+    /// /circles/:circleID/posts/:postID delete
     func deleteCirclePost(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws
 
-    // /circles/:circleID/posts/:postID/comments GET
+    /// /circles/:circleID/posts/:postID/comments GET
     func fetchPostComments(circleID: UUID, postID: UUID, accessToken: TokenStringDTO) async throws -> [CommentDTO]
-    // /circles/:circleID/posts/:postID/comments POST
+    /// /circles/:circleID/posts/:postID/comments POST
     func createPostComment(circleID: UUID, postID: UUID, comment: CommentDTO, accessToken: TokenStringDTO) async throws -> CommentDTO
-    // /circles/:circleID/posts/:postID/comments/:commentID GET
+    /// /circles/:circleID/posts/:postID/comments/:commentID GET
     func fetchPostComment(circleID: UUID, postID: UUID, commentID: UUID, accessToken: TokenStringDTO) async throws -> CommentDTO
-    // /circles/:circleID/posts/:postID/comments/:commentID PATCH
+    /// /circles/:circleID/posts/:postID/comments/:commentID PATCH
     func editPostComment(circleID: UUID, postID: UUID, commentID: UUID, comment: CommentDTO, accessToken: TokenStringDTO) async throws -> CommentDTO
-    // /circles/:circleID/posts/:postID/comments/:commentID delete
+    /// /circles/:circleID/posts/:postID/comments/:commentID delete
     func deletePostComment(circleID: UUID, postID: UUID, commentID: UUID, accessToken: TokenStringDTO) async throws
 }
 

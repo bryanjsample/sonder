@@ -7,8 +7,23 @@
 
 import SwiftUI
 
+enum CreateFeedItemRoute {
+    case post, event
+}
+
 struct CreateFeedItemView: View {
+    
+    @Bindable var authModel: AuthModel
+    @State var tabSelection: CreateFeedItemRoute = .post
+    
     var body: some View {
-        Text("CreateFeedItemView")
+        TabView(selection: $tabSelection) {
+            Tab("Post", systemImage: "square.and.pencil", value: .post) {
+                CreatePostView(authModel: authModel)
+            }
+            Tab("Event", systemImage: "calendar", value: .event) {
+                CreateEventView(authModel: authModel)
+            }
+        }
     }
 }

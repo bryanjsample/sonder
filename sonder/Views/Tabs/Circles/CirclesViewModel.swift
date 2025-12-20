@@ -1,5 +1,5 @@
 //
-//  CirclesViewController.swift
+//  CirclesViewModel.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/15/25.
@@ -7,21 +7,23 @@
 
 import SwiftUI
 
-final class CirclesViewController {
+final class CirclesViewModel {
+    
+    @Bindable var authModel: AuthModel
     let apiClient = DefaultAPIClient()
     let tokenController = TokenController()
     
-    init() { }
+    init(authModel: AuthModel) { self.authModel = authModel }
     
-    func generateCircleInviteCode(with circlesVM: CirclesViewModel) async throws {
+    func generateCircleInviteCode(with circle : CircleModel) async throws {
         let accessToken = try tokenController.loadToken(as: .access)
         let invitation = try await self.apiClient.createCircleInvitation(accessToken: accessToken)
-        circlesVM.updateInvitation(invitation)
+        circle.updateInvitation(invitation)
     }
     
-    func getCircleInvitation(with circlesVM: CirclesViewModel) async throws {
+    func getCircleInvitation(with circle : CircleModel) async throws {
         let accessToken = try tokenController.loadToken(as: .access)
         let invitation = try await self.apiClient.getCircleInvitation(accessToken: accessToken)
-        circlesVM.updateInvitation(invitation)
+        circle.updateInvitation(invitation)
     }
 }

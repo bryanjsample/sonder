@@ -7,31 +7,49 @@
 
 import SwiftUI
 
+enum LandingPageRoute {
+    case feed, calendar, post, circles, profile
+}
+
 struct LandingPageView: View {
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State var tabSelection: LandingPageRoute = .feed
+    @State var showingNewPost = false
     
     var body: some View {
         TabView(selection: $tabSelection) {
-            Tab("Feed", systemImage: "newspaper", value: .feed) {
-                CircleFeedView()
+            Tab("Feed", systemImage: "newspaper", value: LandingPageRoute.feed) {
+                CircleFeedView(authModel: authModel)
             }
-            Tab("Calendar", systemImage: "calendar", value: .calendar) {
-                CircleCalendarView()
+            Tab("Calendar", systemImage: "calendar", value: LandingPageRoute.calendar) {
+                CircleCalendarView(authModel: authModel)
             }
-            Tab("Post", systemImage: "square.and.pencil", value: .post) {
-                CreateFeedItemView()
+            Tab("Post", systemImage: "square.and.pencil", value: LandingPageRoute.post) {
+                Color.clear
             }
-            Tab("Circles", systemImage: "person.3", value: .circles) {
-                CirclesView()
+            Tab("Circles", systemImage: "person.3", value: LandingPageRoute.circles) {
+                CirclesView(authModel: authModel)
             }
-            Tab("Me", systemImage: "person", value: .profile) {
-                UserProfileView(onboardingModel: onboardingModel)
+            Tab("Me", systemImage: "person", value: LandingPageRoute.profile) {
+                UserProfileView(authModel: authModel)
             }
         }
+        .onChange(of: tabSelection) { oldValue, newValue in
+            if newValue == .post {
+                showingNewPost = true
+            }
+        }
+        .sheet(isPresented: $showingNewPost, onDismiss: resetTab) {
+            CreateFeedItemView(authModel: authModel)
+        }
+    }
+    
+    func resetTab() {
+        tabSelection = .feed
     }
 }
 
-//#Preview {
-//    LandingPageView()
-//}
+
+#Preview {
+    LandingPageView(authModel: AuthModel())
+}

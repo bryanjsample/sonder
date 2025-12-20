@@ -12,15 +12,15 @@ import SonderDTOs
 @main
 struct sonderApp: App {
 
-    @State private var onboardingModel = OnboardingModel()
+    @State private var authModel = AuthModel()
     
     var body: some Scene {
         WindowGroup {
-            RootView(onboardingModel: onboardingModel)
+            RootView(authModel: authModel)
                 .onAppear {
-                    let onboardingController = OnboardingController()
+                    let onboardingController = OnboardingController(authModel: authModel)
                     Task {
-                        await onboardingController.startup(with: onboardingModel)
+                        await onboardingController.startup()
                     }
                 }
         }
@@ -28,21 +28,21 @@ struct sonderApp: App {
 }
 
 private struct RootView: View {
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
 
     var body: some View {
         Group {
-            switch onboardingModel.status {
+            switch authModel.status {
             case .loading:
                 SplashView()
             case .authenticatedInCircle:
-                LandingPageView(onboardingModel: onboardingModel)
+                LandingPageView(authModel: authModel)
             case .notOnboarded:
-                UserOnboardingView(onboardingModel: onboardingModel)
+                UserOnboardingView(authModel: authModel)
             case .authenticatedNotInCircle:
-                CircleOnboardingView(onboardingModel: onboardingModel)
+                CircleOnboardingView(authModel: authModel)
             case .unauthenticated:
-                LoginView(onboardingModel: onboardingModel)
+                LoginView(authModel: authModel)
                     .onOpenURL { url in
                         GIDSignIn.sharedInstance.handle(url)
                     }
@@ -51,7 +51,7 @@ private struct RootView: View {
                     Text("Error").font(.headline)
                     Text(message).font(.subheadline)
                     Button("Retry") {
-                        onboardingModel.unauthenticated()
+                        authModel.unauthenticated()
                     }
                 }
                 .padding(Constants.padding)

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CircleInviteCodeView: View {
     
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State private var circleInviteCode: String = ""
     
     var body: some View {
@@ -17,11 +17,11 @@ struct CircleInviteCodeView: View {
             BackgroundColor()
                 .ignoresSafeArea(.all)
             VStack {
-                SonderTitleText.titleBlock
+                SonderTitleText()
                 Spacer(minLength: 138.0)
                 inviteCodeForm
                 submitButton
-            }.ignoresSafeArea(.keyboard)
+            }
         }
     }
 }
@@ -38,25 +38,13 @@ extension CircleInviteCodeView {
     }
     
     var submitButton: some View {
-        Button() {
-            handlePress()
-        } label: {
-            Text("Join Circle")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
+        GenericButton(title: "Join Circle") {
+            let onboardingController = OnboardingController(authModel: authModel)
+            onboardingController.joinCircleViaCode(invitation: circleInviteCode)
         }
-        .buttonStyle(.glassProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-        .ignoresSafeArea(.keyboard)
-    }
-    
-    func handlePress() {
-        let onboardingController = OnboardingController()
-        onboardingController.joinCircleViaCode(with: onboardingModel, invitation: circleInviteCode)
     }
 }
 
 #Preview {
-    CircleInviteCodeView(onboardingModel: OnboardingModel())
+    CircleInviteCodeView(authModel: AuthModel())
 }

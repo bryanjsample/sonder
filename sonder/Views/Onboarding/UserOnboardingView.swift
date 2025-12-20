@@ -10,11 +10,12 @@ import SonderDTOs
 
 struct UserOnboardingView: View {
     
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State var firstName: String = ""
     @State var lastName: String = ""
     @State var email: String = ""
     @State var username: String = ""
+    @State var pictureURL: String = ""
     
     var body: some View {
         ZStack {
@@ -22,11 +23,16 @@ struct UserOnboardingView: View {
                 .ignoresSafeArea(.all)
             VStack {
                 Spacer()
-                SonderTitleText.titleBlock
-                ProfilePicturePicker(defaultSystemImage: "person.circle.fill")
+                SonderTitleText()
+                ProfilePicturePicker(
+                    .user,
+                    authModel: authModel,
+                    defaultSystemImage: "person.circle.fill"
+                )
                 onboardingForm
                 submitButton
-            }.ignoresSafeArea(.keyboard)
+                    .ignoresSafeArea(.keyboard)
+            }
         }
     }
 }
@@ -46,36 +52,25 @@ extension UserOnboardingView {
                     .textInputAutocapitalization(.never)
             }
         }.onAppear {
-            firstName = onboardingModel.user?.firstName ?? ""
-            lastName = onboardingModel.user?.lastName ?? ""
-            email = onboardingModel.user?.email ?? ""
-            username = onboardingModel.user?.username ?? ""
+            firstName = authModel.user?.firstName ?? ""
+            lastName = authModel.user?.lastName ?? ""
+            email = authModel.user?.email ?? ""
+            username = authModel.user?.username ?? ""
+            pictureURL = authModel.user?.pictureUrl ?? ""
         }
         .scrollDismissesKeyboard(.immediately)
         .scrollContentBackground(.hidden)
     }
     
     var submitButton: some View {
-        Button() {
-            Task {
-                await handlePress()
-            }
-        } label: {
-            Text("Create User")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
+        GenericButton(title: "Create User") {
+            let onboardingController = OnboardingController(authModel: authModel)
+            print("pictureURL = \(pictureURL)")
+            onboardingController.onboardNewUser(firstName: firstName, lastName: lastName, email: email, username: username, pictureUrl: pictureURL)
         }
-        .buttonStyle(.glassProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-    }
-    
-    func handlePress() async {
-        let onboardingController = OnboardingController()
-        onboardingController.onboardNewUser(with: onboardingModel, firstName: firstName, lastName: lastName, email: email, username: username)
     }
 }
 
 #Preview {
-    UserOnboardingView(onboardingModel: OnboardingModel())
+    UserOnboardingView(authModel: AuthModel())
 }

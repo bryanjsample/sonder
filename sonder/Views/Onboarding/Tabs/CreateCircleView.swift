@@ -9,9 +9,9 @@ import SwiftUI
 
 struct CreateCircleView: View {
     
-    @Bindable var onboardingModel: OnboardingModel
+    @Bindable var authModel: AuthModel
     @State private var name: String = ""
-    @State private var description: String = ""
+    @State var description: String = ""
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -19,11 +19,11 @@ struct CreateCircleView: View {
             BackgroundColor()
                 .ignoresSafeArea(.all)
             VStack {
-                SonderTitleText.titleBlock
-                ProfilePicturePicker(defaultSystemImage: "figure.socialdance.circle.fill")
+                SonderTitleText()
+                ProfilePicturePicker(.circle, authModel: authModel, defaultSystemImage: "figure.socialdance.circle.fill")
                 circleForm
                 submitButton
-            }.ignoresSafeArea(.keyboard)
+            }
         }
     }
 }
@@ -34,48 +34,21 @@ extension CreateCircleView {
             Section("Circle Information") {
                 TextField("Circle Name", text: $name)
                     .font(.title2)
-                descriptionInput
+                GenericTextInput(inputDescription: "Circle Description...", textBinding: $description)
             }
         }
         .scrollDismissesKeyboard(.immediately)
         .scrollContentBackground(.hidden)
     }
     
-    var descriptionInput: some View {
-        ZStack(alignment: .topLeading) {
-            if !isFocused && description.isEmpty {
-                Text("Circle Description...")
-                    .allowsHitTesting(false)
-                    .opacity(0.30)
-                    .font(.body)
-            }
-            
-            TextEditor(text: $description)
-                .focused($isFocused)
-                .font(.body)
-        }
-    }
-    
     var submitButton: some View {
-        Button() {
-            handlePress()
-        } label: {
-            Text("Create Circle")
-                .frame(maxWidth: .infinity)
-                .padding(Constants.padding)
+        GenericButton(title: "Create Circle") {
+            let onboardingController = OnboardingController(authModel: authModel)
+            onboardingController.onboardNewCircle(circleName: name, description: description)
         }
-        .buttonStyle(.glassProminent)
-        .padding(Constants.padding)
-        .fontWeight(.bold)
-        .ignoresSafeArea(.keyboard)
-    }
-    
-    func handlePress() {
-        let onboardingController = OnboardingController()
-        onboardingController.onboardNewCircle(with: onboardingModel, circleName: name, description: description)
     }
 }
 
 #Preview {
-    CreateCircleView(onboardingModel: OnboardingModel())
+    CreateCircleView(authModel: AuthModel())
 }

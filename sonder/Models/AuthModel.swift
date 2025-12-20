@@ -1,5 +1,5 @@
 //
-//  OnboardingModel.swift
+//  AuthModel.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/3/25.
@@ -14,7 +14,7 @@ enum AuthStatus: Equatable {
 }
 
 @Observable
-final class OnboardingModel {
+final class AuthModel {
 
     var status: AuthStatus = .unauthenticated
     var user: UserDTO? = nil
