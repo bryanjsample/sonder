@@ -49,17 +49,6 @@ final class CircleFeedViewModel {
     }
     
     @MainActor
-    func runFeedActionFlow(_ operation: @escaping () async throws -> Void) {
-        Task {
-            do {
-                try await operation()
-            } catch {
-                self.handleFeedItemError(error)
-            }
-        }
-    }
-    
-    @MainActor
     func fetchPosts() async -> [PostDTO] {
         var posts: [PostDTO] = []
         do {

@@ -26,6 +26,7 @@ extension FeedEventComponent {
         VStack {
             hostBlock
             eventBlock
+                .textSelection(.enabled)
         }.padding(Constants.padding)
     }
     

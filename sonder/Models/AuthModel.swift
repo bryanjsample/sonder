@@ -52,5 +52,11 @@ final class AuthModel {
         self.circle = circle
         self.user?.circleID = circle.id
     }
+    
+    func updateCircleMembers(_ members: [UserDTO]) {
+        self.circle?.members = members
+        print("in authModel: members = \(members)")
+        print("in authModel: modelMembers = \(self.circle?.members?.debugDescription ?? "no array")")
+    }
 }
 

@@ -33,6 +33,7 @@ extension FeedPostComponent {
         VStack {
             authorBlock
             postBlock
+                .textSelection(.enabled)
         }.padding(Constants.padding)
     }
     
