@@ -123,7 +123,7 @@ private struct FeedEventDetailsComponent: View {
     var body: some View {
         eventTitle.padding(.bottom, Constants.padding / 2)
         eventTime
-        eventDescription.padding(.bottom, Constants.padding / 2)
+        eventDescription.padding(.vertical, Constants.padding / 2)
         timestamp
     }
     

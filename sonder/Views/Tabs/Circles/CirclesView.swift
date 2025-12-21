@@ -22,26 +22,30 @@ struct CirclesView: View {
 
     var body: some View {
         VStack {
-            titleBar
-            ScrollView {
-                LazyVStack {
-                    circlePicture
-                    circleDescription
-                    circleMembers
-                    inviteCodeBlock
-                }
-            }
+            circleInfo
+                .frame(maxWidth: .infinity)
+                .background(.tertiary)
+            membersBlock
+            Spacer()
+            inviteCodeBlock
         }
     }
 }
 
 extension CirclesView {
     
+    var circleInfo: some View {
+        VStack {
+            titleBar
+            circlePicture
+            circleDescription
+                .padding(.bottom, Constants.padding)
+        }
+    }
+    
     var titleBar: some View {
         circleName
             .padding(Constants.padding)
-            .frame(maxWidth: .infinity)
-            .background(.tertiary)
     }
     
     var circleName: some View {
@@ -59,7 +63,7 @@ extension CirclesView {
             } else {
                 placeholderPicture
             }
-        }.padding(.trailing, Constants.padding / 2)
+        }.padding(Constants.padding)
     }
     
     var placeholderPicture: some View {
@@ -74,9 +78,29 @@ extension CirclesView {
             .font(.subheadline)
     }
     
+    var circleMembersHeader: some View {
+        HStack {
+            Text("Members")
+                .font(.title2)
+                .padding([.top, .leading, .horizontal], Constants.padding)
+            Spacer()
+        }
+    }
+    
     var circleMembers: some View {
-        ForEach(authModel.circle?.members ?? []) { member in
-            Text("\(member.firstName) \(member.lastName) || \(member.username ?? "no username")")
+        ScrollView {
+            LazyVStack {
+                ForEach(authModel.circle?.members ?? []) { member in
+                    UserTileComponent(member)
+                }
+            }
+        }
+    }
+    
+    var membersBlock: some View {
+        VStack {
+            circleMembersHeader
+            circleMembers
         }
     }
     
@@ -95,7 +119,8 @@ extension CirclesView {
                 }
             }
         }
-        .background(.tertiary, in: RoundedRectangle(cornerRadius: Constants.padding))
+        .frame(maxWidth: .infinity)
+        .background(.tertiary)
     }
     
     var generateInviteCodeButton: some View {
