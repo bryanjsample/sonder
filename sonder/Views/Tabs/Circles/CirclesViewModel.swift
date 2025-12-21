@@ -59,5 +59,9 @@ final class CirclesViewModel {
         let invitation = try await self.apiClient.getCircleInvitation(accessToken: accessToken)
         circle.updateInvitation(invitation)
     }
+    
+    func fetchCircle() async throws {
+        let accessToken = try tokenController.loadToken(as: .access)
+    }
 
 }

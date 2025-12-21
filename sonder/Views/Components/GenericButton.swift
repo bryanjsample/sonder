@@ -18,7 +18,7 @@ struct GenericButton: View {
                 .frame(maxWidth: .infinity)
                 .padding(Constants.padding)
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.glass)
         .padding(Constants.padding)
         .fontWeight(.bold)
     }
