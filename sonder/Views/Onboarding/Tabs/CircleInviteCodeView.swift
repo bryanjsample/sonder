@@ -46,5 +46,5 @@ extension CircleInviteCodeView {
 }
 
 #Preview {
-    CircleInviteCodeView(authModel: AuthModel())
+    CircleOnboardingView(authModel: AuthModel())
 }

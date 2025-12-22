@@ -23,7 +23,7 @@ struct CircleFeedView: View {
         ScrollView {
             LazyVStack {
                 ForEach(feedItems) { item in
-                    FeedItemComponent(authModel: authModel, item: item)
+                    FeedItem(authModel: authModel, item: item)
                 }
             }
         }.onAppear {

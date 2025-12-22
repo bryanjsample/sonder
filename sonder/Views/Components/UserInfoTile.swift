@@ -1,5 +1,5 @@
 //
-//  UserTileComponent.swift
+//  UserInfoTile.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/20/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SonderDTOs
 
-struct UserTileComponent: View {
+struct UserInfoTile: View {
     
     @State var user: UserDTO
     
@@ -25,10 +25,10 @@ struct UserTileComponent: View {
     }
 }
 
-extension UserTileComponent {
+extension UserInfoTile {
     
     var profilePicture: some View {
-        ProfilePictureViewComponent(pictureURL: self.user.pictureUrl ?? "", width: 40, height: 40)
+        ProfilePictureFrame(pictureURL: self.user.pictureUrl ?? "", width: 40, height: 40)
             .padding(.trailing, Constants.padding / 2)
     }
     
@@ -60,5 +60,5 @@ extension UserTileComponent {
 
 #Preview {
         let user = UserDTO(email: "bryanjsample@gmail.com", firstName: "Bryan", lastName: "Sample", username: "bsizzle", pictureUrl: "https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg")
-    UserTileComponent(user)
+    UserInfoTile(user)
 }

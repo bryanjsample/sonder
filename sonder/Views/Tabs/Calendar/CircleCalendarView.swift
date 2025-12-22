@@ -23,7 +23,7 @@ struct CircleCalendarView: View {
         ScrollView {
             LazyVStack {
                 ForEach(events) { event in
-                    FeedItemComponent(authModel: authModel, item: FeedItemDTO(from: event))
+                    FeedItem(authModel: authModel, item: FeedItemDTO(from: event))
                 }
             }
         }.onAppear {

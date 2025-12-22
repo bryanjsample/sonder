@@ -24,13 +24,10 @@ struct CreatePostView: View {
             BackgroundColor()
                 .ignoresSafeArea(.all)
             VStack {
-                Form {
-                    Section("Post Details") {
-                        GenericTextInput(inputDescription: "Post Content...", textBinding: $postContent)
-                    }
-                }
-                .scrollDismissesKeyboard(.immediately)
-                .scrollContentBackground(.hidden)
+                // New Post in X
+                Spacer()
+                FeedItem(authModel: authModel, newPostContent: $postContent)
+                Spacer()
                 submitButton
             }
         }
@@ -48,3 +45,16 @@ extension CreatePostView {
     }
     
 }
+
+#Preview {
+    LandingPageView(authModel: AuthModel(), tabSelection: .post)
+}
+
+
+//               Form {
+//                    Section("Post Details") {
+//                        GenericTextInput(inputDescription: "Post Content...", textBinding: $postContent)
+//                    }
+//                }
+//                .scrollDismissesKeyboard(.immediately)
+//                .scrollContentBackground(.hidden)

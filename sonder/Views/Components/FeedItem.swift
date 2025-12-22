@@ -1,5 +1,5 @@
 //
-//  FeedItemComponent.swift
+//  FeedItem.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/20/25.
@@ -8,17 +8,32 @@
 import SwiftUI
 import SonderDTOs
 
-struct FeedItemComponent: View {
+struct FeedItem: View {
     
     @Bindable var authModel: AuthModel
     @State var item: FeedItemDTO
+    var newPostContent: Binding<String>?
+    
+    init(authModel: AuthModel, item: FeedItemDTO) {
+        self.authModel = authModel
+        self.item = item
+        self.newPostContent = nil
+    }
+    
+    init(authModel: AuthModel, newPostContent: Binding<String>) {
+        self.authModel = authModel
+        let user = authModel.user ?? UserDTO(email: "test@gmail.com", firstName: "Ftest", lastName: "Ltest")
+        let post = PostDTO(id: UUID(), circleID: UUID(), authorID: user.id ?? UUID(), author: user, content: "this shouldnt be showing in view", createdAt: Date.now)
+        self.item = FeedItemDTO(from: post)
+        self.newPostContent = newPostContent
+    }
     
     var body: some View {
         VStack {
             ownerBlock
             switch item {
             case .post(let post):
-                FeedPostDetailsComponent(post)
+                FeedPostDetailsComponent(post, newPostContent: self.newPostContent)
                     .textSelection(.enabled)
             case .event(let event):
                 FeedEventDetailsComponent(event)
@@ -31,11 +46,11 @@ struct FeedItemComponent: View {
     }
 }
 
-extension FeedItemComponent {
+extension FeedItem {
     
     var ownerBlock: some View {
         HStack {
-            ProfilePictureViewComponent(pictureURL: item.ownerPictureUrl ?? "", width: 40, height: 40)
+            ProfilePictureFrame(pictureURL: item.ownerPictureUrl ?? "", width: 40, height: 40)
                 .padding(.trailing, Constants.padding / 2)
             VStack {
                 name
@@ -88,8 +103,20 @@ extension FeedItemComponent {
 private struct FeedPostDetailsComponent: View {
     
     @State var post: PostDTO
+    var newPostContent: Binding<String>?
     
-    init(_ post: PostDTO) { self.post = post }
+    init(_ post: PostDTO) {
+        self.post = post
+    }
+    
+    init(_ post: PostDTO, newPostContent: Binding<String>?) {
+        self.post = post
+        if let content = newPostContent {
+            self.newPostContent = content
+        } else {
+            self.newPostContent = nil
+        }
+    }
     
     var body: some View {
         postContent
@@ -98,7 +125,13 @@ private struct FeedPostDetailsComponent: View {
     
     var postContent: some View {
         HStack {
-            Text(self.post.content)
+            if let content = self.newPostContent {
+                GenericTextEditor(inputDescription: "Post Content...", textBinding: content)
+                    .clipShape(RoundedRectangle(cornerRadius: Constants.padding))
+                    .scrollDismissesKeyboard(.immediately)
+            } else {
+                Text(self.post.content)
+            }
             Spacer()
         }.padding(.bottom, Constants.padding / 2)
     }
@@ -169,6 +202,10 @@ private struct FeedEventDetailsComponent: View {
             Spacer()
         }
     }
+}
+
+#Preview {
+    LandingPageView(authModel: AuthModel())
 }
 
 //#Preview {

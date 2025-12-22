@@ -31,7 +31,7 @@ struct CreateEventView: View {
                 Form {
                     Section("Event Details") {
                         TextField("Event Title", text: $title)
-                        GenericTextInput(inputDescription: "Event Description...", textBinding: $description)
+                        GenericTextEditor(inputDescription: "Event Description...", textBinding: $description)
                         DatePicker("Start Time", selection: $startTime)
                         DatePicker("End Time", selection: $endTime)
                     }

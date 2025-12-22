@@ -1,5 +1,5 @@
 //
-//  ProfilePictureViewComponent.swift
+//  ProfilePictureFrame.swift
 //  sonder
 //
 //  Created by Bryan Sample on 12/20/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SonderDTOs
 
-struct ProfilePictureViewComponent: View {
+struct ProfilePictureFrame: View {
     
     let pictureURL: String
     let width: CGFloat
@@ -34,7 +34,7 @@ struct ProfilePictureViewComponent: View {
     }
 }
 
-extension ProfilePictureViewComponent {
+extension ProfilePictureFrame {
     var placeholderPicture: some View {
         Image(systemName: "person.circle.fill")
             .resizable()

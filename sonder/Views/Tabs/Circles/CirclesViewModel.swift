@@ -60,8 +60,8 @@ final class CirclesViewModel {
         circle.updateInvitation(invitation)
     }
     
-    func fetchCircle() async throws {
-        let accessToken = try tokenController.loadToken(as: .access)
-    }
+//    func fetchCircle() async throws {
+//        let accessToken = try tokenController.loadToken(as: .access)
+//    }
 
 }

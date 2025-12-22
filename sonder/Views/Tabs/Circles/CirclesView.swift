@@ -91,7 +91,7 @@ extension CirclesView {
         ScrollView {
             LazyVStack {
                 ForEach(authModel.circle?.members ?? []) { member in
-                    UserTileComponent(member)
+                    UserInfoTile(member)
                 }
             }
         }

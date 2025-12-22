@@ -34,7 +34,7 @@ extension CreateCircleView {
             Section("Circle Information") {
                 TextField("Circle Name", text: $name)
                     .font(.title2)
-                GenericTextInput(inputDescription: "Circle Description...", textBinding: $description)
+                GenericTextEditor(inputDescription: "Circle Description...", textBinding: $description)
             }
         }
         .scrollDismissesKeyboard(.immediately)
